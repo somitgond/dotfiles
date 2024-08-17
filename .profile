@@ -1,7 +1,8 @@
 #
-# ~/.bash_profile
+# ~/.profile
 #
-[[ -f ~/.bashrc ]] && . ~/.bashrc
+#[[ -f ~/.bashrc ]] && . ~/.bashrc
+export ENV=$HOME/.kshrc
 export BROWSER='firefox'
 export TERM='st'
 export TERMINAL='st'
