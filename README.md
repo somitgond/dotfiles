@@ -1,2 +1,7 @@
 # dotfiles
-My config files
+My configurations related to:
+- tmux
+- emacs
+- nvim
+- bash/ksh/mksh
+- others

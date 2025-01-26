@@ -10,7 +10,7 @@ Xft.rgba: rgb
 *.alpha: 0.8
 
 !! Set a default font and font size as below:
-*.font:  MesloLGMDZ Nerd Font Mono:style=Regular:size=12
+*.font:  IBM Plex Mono:style=Regular:size=12
 
 /* name		dark	light */
 /* black	0	8 */

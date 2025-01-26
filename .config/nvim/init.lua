@@ -44,7 +44,6 @@ vim.o.wildmode = "longest,list"
 -- set colorscheme
 vim.cmd [[
   syntax off 
-  colorscheme retrobox 
   autocmd TextChanged,TextChangedI *.md silent write
 ]]
 
