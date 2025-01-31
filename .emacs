@@ -1,12 +1,14 @@
-
+;; emacs config files
 ;; set custom file
 (setq custom-file "~/.emacs.custom.el")
 
 ;; setting custom fonts
 (add-to-list 'default-frame-alist `(font . "Iosevka-14"))
+
 ;; installing packages
 (require 'org)
 (require 'smex)
+(require 'magit)
 
 (menu-bar-mode 0)
 (tool-bar-mode 0)
