@@ -8,7 +8,9 @@ include "level3(ralt_switch)"
 ```
 
 *** home row modes
+- https://github.com/jtroo/kanata
 - https://shom.dev/start/using-kanata-to-remap-any-keyboard/
+
 
 
 * Some Projects that I find interesting
