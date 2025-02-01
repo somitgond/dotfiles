@@ -1,0 +1,17 @@
+
+* notes
+
+*** changing altgr to alt in colemak_dh layout in linux
+The symbols file is at /usr/share/X11/xkb/symbols/us. I commented this line out in my copy
+```
+include "level3(ralt_switch)"
+```
+
+*** home row modes
+- https://shom.dev/start/using-kanata-to-remap-any-keyboard/
+
+
+* Some Projects that I find interesting
+- Neatroff 
+- nextvi
+- kakoune
