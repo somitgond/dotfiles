@@ -45,7 +45,13 @@ dunst &
 unclutter &
 
 # setting brightness of screen
-brightnessctl s 5%;
+brightnessctl s 10%;
 
 # NetworkManager applet 
-#nm-applet & 
+nm-applet & 
+
+# set keyboard layout
+setxkbmap us -variant colemak_dh;
+
+# starting home row mods
+kanata -c /home/jack/.config/kanata/kanata.kbd -q &
