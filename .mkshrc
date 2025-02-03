@@ -13,7 +13,7 @@ SCRIPTS_DIR="~/.scripts"
 [[ $- != *i* ]] && return
 
 # set mode to vim 
-set -o vi
+#set -o vi
 
 # Some alias
 alias syu='sudo apt update && sudo apt upgrade'
@@ -71,4 +71,3 @@ NORMAL="\033[0;39m"
 NORMAL_BOLD="\033[1;39m"
 #PS1=$(print -n "[\$?]$RED[$PINK\${PWD##*/}$RED]$GREENλ$NORMAL ")
 PS1=$(print -n "$RED[$NORMAL_BOLD\${PWD##*/}$RED]$NORMAL ")
-

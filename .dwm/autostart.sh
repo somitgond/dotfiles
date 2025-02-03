@@ -1,5 +1,5 @@
 # mapping printscreen key between ctrl_r and alt_r to super_l key
-sleep 1 && xmodmap -e "keycode 107 = Super_L" && xmodmap -e "remove mod1 = Super_L" &
+#sleep 1 && xmodmap -e "keycode 107 = Super_L" && xmodmap -e "remove mod1 = Super_L" &
 
 # Statusbar loop
 slstatus 2> /dev/null &
@@ -10,7 +10,7 @@ xwallpaper --zoom "$(ls ~/.wallpapers/* | shuf | head -1)" &
 
 # mapping capslock to escape key 
 #setxkbmap -option caps:swapescape -option shift:both_capslock -option shift:both_capslock_cancel &
-setxkbmap -option shift:both_capslock -option shift:both_capslock_cancel &
+#setxkbmap -option shift:both_capslock -option shift:both_capslock_cancel &
 
 #xrandr --output eDP-1 --mode 1920x1080 --rate 60 &
 
@@ -24,7 +24,7 @@ setxkbmap -option shift:both_capslock -option shift:both_capslock_cancel &
 /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
 
 # gnome keyring
-/usr/bin/gnome-keyring-daemon --daemonize --login --components=pkcs11,secrets,ssh 
+/usr/bin/gnome-keyring-daemon --daemonize --login --components=pkcs11,secrets,ssh &
 
 # set keyboard press frequency and delay time
 xset r rate 250 60 & 
@@ -45,13 +45,10 @@ dunst &
 unclutter &
 
 # setting brightness of screen
-brightnessctl s 10%;
+brightnessctl s 10% &
 
 # NetworkManager applet 
-nm-applet & 
+#nm-applet & 
 
 # set keyboard layout
-setxkbmap us -variant colemak_dh;
-
-# starting home row mods
-kanata -c /home/jack/.config/kanata/kanata.kbd -q &
+setxkbmap us -variant colemak_dh &
