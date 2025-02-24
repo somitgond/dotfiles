@@ -2,40 +2,39 @@
 ;; references:
 ;; 1. https://gitlab.com/Kaligule/emacs-config/-/blob/master/config.org
 
-;;;; Code:
-;; optimizations
-(setq gc-cons-threshold 100000000) ; 100mb
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
-
 ;; set custom file
 (setq custom-file "~/.config/emacs/custom.el")
 (setq python-shell-virtualenv-path "~/.local/python3/")
 
-;; adding melpa
+;; package install
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(require 'use-package)
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+
+;; package sources
+(setq package-archives
+      '(("GNU ELPA"     . "https://elpa.gnu.org/packages/")
+        ("MELPA"        . "https://melpa.org/packages/")
+        ("ORG"          . "https://orgmode.org/elpa/")
+        ("MELPA Stable" . "https://stable.melpa.org/packages/")
+        ("nongnu"       . "https://elpa.nongnu.org/nongnu/"))
+      package-archive-priorities
+      '(("GNU ELPA"     . 20)
+        ("MELPA"        . 15)
+        ("ORG"          . 10)
+        ("MELPA Stable" . 5)
+        ("nongnu"       . 0)))
 (package-initialize)
 
 ;; setting custom fonts
 ;;(add-to-list 'default-frame-alist `(font . "Iosevka-14"))
 (add-to-list 'default-frame-alist `(font . "JetBrains Mono-13"))
 
-;; UI customizations
-
-;; no tool bar
-(push '(tool-bar-lines . 0) default-frame-alist)
-
-;; no menu bar
-(menu-bar-mode 0)
-
 ;; stop creating ~ files
 (setq make-backup-files nil)
 
-(scroll-bar-mode 0)
 (blink-cursor-mode 0)
-(setq inhibit-startup-screen t)
-;;(setq initial-major-mode 'org-mode)
-(setq initial-scratch-message nil)
 
 ;;(setq display-line-numbers-type 'relative) 
 (global-display-line-numbers-mode 1)
