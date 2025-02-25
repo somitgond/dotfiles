@@ -503,9 +503,153 @@
                                           ("DONE"  . 9745)))
   :hook (org-mode . org-superstar-mode))
 
+;; svg
+(use-package svg-tag-mode
+  :after org
+  :config
+  (defconst date-re "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}")
+  (defconst time-re "[0-9]\\{2\\}:[0-9]\\{2\\}")
+  (defconst day-re "[A-Za-z]\\{3\\}")
+  (defconst day-time-re (format "\\(%s\\)? ?\\(%s\\)?" day-re time-re))
+
+  (defun svg-progress-percent (value)
+	(svg-image (svg-lib-concat
+				(svg-lib-progress-bar (/ (string-to-number value) 100.0)
+			      nil :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+				(svg-lib-tag (concat value "%")
+				  nil :stroke 0 :margin 0)) :ascent 'center))
+
+  (defun svg-progress-count (value)
+	(let* ((seq (mapcar #'string-to-number (split-string value "/")))
+           (count (float (car seq)))
+           (total (float (cadr seq))))
+	  (svg-image (svg-lib-concat
+				  (svg-lib-progress-bar (/ count total) nil
+					:margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+				  (svg-lib-tag value nil
+					:stroke 0 :margin 0)) :ascent 'center)))
+  (setq svg-tag-tags
+      `(;; Org tags
+        ;; (":\\([A-Za-z0-9]+\\)" . ((lambda (tag) (svg-tag-make tag))))
+        ;; (":\\([A-Za-z0-9]+[ \-]\\)" . ((lambda (tag) tag)))
+        
+        ;; Task priority
+        ("\\[#[A-Z]\\]" . ( (lambda (tag)
+                              (svg-tag-make tag :face 'org-priority 
+                                            :beg 2 :end -1 :margin 0))))
+
+        ;; Progress
+        ("\\(\\[[0-9]\\{1,3\\}%\\]\\)" . ((lambda (tag)
+          (svg-progress-percent (substring tag 1 -2)))))
+        ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
+          (svg-progress-count (substring tag 1 -1)))))
+        
+        ;; TODO / DONE
+        ;; ("TODO" . ((lambda (tag) (svg-tag-make "TODO" :face 'org-todo
+		;; 									           :inverse t :margin 0))))
+        ;; ("DONE" . ((lambda (tag) (svg-tag-make "DONE" :face 'org-done :margin 0))))
+
+
+        ;; Citation of the form [cite:@Knuth:1984] 
+        ("\\(\\[cite:@[A-Za-z]+:\\)" . ((lambda (tag)
+                                          (svg-tag-make tag
+                                                        :inverse t
+                                                        :beg 7 :end -1
+                                                        :crop-right t))))
+        ("\\[cite:@[A-Za-z]+:\\([0-9]+\\]\\)" . ((lambda (tag)
+                                                (svg-tag-make tag
+                                                              :end -1
+                                                              :crop-left t))))
+
+        
+        ;; Active date (with or without day name, with or without time)
+        (,(format "\\(<%s>\\)" date-re) .
+         ((lambda (tag)
+            (svg-tag-make tag :beg 1 :end -1 :margin 0))))
+        (,(format "\\(<%s \\)%s>" date-re day-time-re) .
+         ((lambda (tag)
+            (svg-tag-make tag :beg 1 :inverse nil :crop-right t :margin 0))))
+        (,(format "<%s \\(%s>\\)" date-re day-time-re) .
+         ((lambda (tag)
+            (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0))))
+
+        ;; Inactive date  (with or without day name, with or without time)
+         (,(format "\\(\\[%s\\]\\)" date-re) .
+          ((lambda (tag)
+             (svg-tag-make tag :beg 1 :end -1 :margin 0 :face 'org-date))))
+         (,(format "\\(\\[%s \\)%s\\]" date-re day-time-re) .
+          ((lambda (tag)
+             (svg-tag-make tag :beg 1 :inverse nil :crop-right t :margin 0 :face 'org-date))))
+         (,(format "\\[%s \\(%s\\]\\)" date-re day-time-re) .
+          ((lambda (tag)
+             (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0 :face 'org-date)))))))
+
+(add-hook 'org-mode-hook 'svg-tag-mode)
+
+;; prettify tags and keywords
+(defun sgt/prettify-symbols-setup ()
+  "Beautify keywords"
+  (setq prettify-symbols-alist
+		(mapcan (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
+				'(; Greek symbols
+				  ("lambda" . ?λ)
+				  ("delta"  . ?Δ)
+				  ("gamma"  . ?Γ)
+				  ("phi"    . ?φ)
+				  ("psi"    . ?ψ)
+				  ; Org headers
+				  ("#+title:"  . "")
+				  ("#+author:" . "")
+                  ("#+date:"   . "")
+				  ; Checkboxes
+				  ("[ ]" . "")
+				  ("[X]" . "")
+				  ("[-]" . "")
+				  ; Blocks
+				  ("#+begin_src"   . "") ; 
+				  ("#+end_src"     . "")
+				  ("#+begin_QUOTE" . "‟")
+				  ("#+begin_QUOTE" . "”")
+				  ; Drawers
+				  ;    ⚙️
+				  (":properties:" . "")
+				  ; Agenda scheduling
+				  ("SCHEDULED:"   . "🕘")
+				  ("DEADLINE:"    . "⏰")
+				  ; Agenda tags  
+				  (":@projects:"  . "☕")
+				  (":work:"       . "🚀")
+				  (":@inbox:"     . "✉️")
+				  (":goal:"       . "🎯")
+				  (":task:"       . "📋")
+				  (":@thesis:"    . "📝")
+				  (":thesis:"     . "📝")
+				  (":uio:"        . "🏛️")
+				  (":emacs:"      . "")
+				  (":learn:"      . "🌱")
+				  (":code:"       . "💻")
+				  (":fix:"        . "🛠️")
+				  (":bug:"        . "🚩")
+				  (":read:"       . "📚")
+				  ; Roam tags
+				  ("#+filetags:"  . "📎")
+				  (":wip:"        . "🏗️")
+				  (":ct:"         . "➡️") ; Category Theory
+                  ; ETC
+                  (":verb:"       . "🌐") ; HTTP Requests in Org mode
+				  )))
+  (prettify-symbols-mode))
+
+;;(add-hook 'org-mode-hook        #'sgt/prettify-symbols-setup)
+;;(add-hook 'org-agenda-mode-hook #'sgt/prettify-symbols-setup)
+
 ;; right align tags
 (add-to-list 'font-lock-extra-managed-props 'display)
-`
+(font-lock-add-keywords 'org-mode
+                        `(("^.*?\\( \\)\\(:[[:alnum:]_@#%:]+:\\)$"
+                           (1 `(face nil
+                                     display (space :align-to (- right ,(org-string-width (match-string 2)) 3)))
+                              prepend))) t)
 ;; Disable Electric Indent Mode
 (add-hook 'org-mode-hook #'(lambda ()
 							 (electric-indent-local-mode -1)))
@@ -520,8 +664,181 @@
 ;; open links with return
 (setq org-return-follows-link t)
 
+;; Don’t insert a blank newline before new entries (e.g., list bullets and section headings).
 (setq org-blank-before-new-entry '((heading . nil)
                                    (plain-list-item . nil)))
+
+;;;;;;;;;;;;;;;;;; Agenda
+(setq org-agenda-start-on-weekday nil
+      org-agenda-block-separator  nil
+      org-agenda-remove-tags      t)
+
+;; group agenda by tags
+(use-package org-super-agenda
+  :after org
+  :config
+  (setq org-super-agenda-header-prefix "\n❯ ")
+  ;; Hide the thin width char glyph
+  (add-hook 'org-agenda-mode-hook
+            #'(lambda () (setq-local nobreak-char-display nil)))
+  (org-super-agenda-mode))
+
+;;;;;;;;;;;; Tasks
+;; task priorities
+(setq org-lowest-priority  ?F) ;; Gives us priorities A through F
+(setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
+
+(setq org-priority-faces
+      '((65 . "#BF616A")
+        (66 . "#EBCB8B")
+        (67 . "#B48EAD")
+        (68 . "#81A1C1")
+        (69 . "#5E81AC")
+        (70 . "#4C566A")))
+
+;; todo states
+(setq org-todo-keywords
+      '((sequence
+         ;; Needs further action
+		 "TODO(t)" "PROG(p)" "NEXT(n)" "WAIT(w)" "QUESTION(q)"
+		 "|"
+         ;; Needs no action currently
+		 "DONE(d)")))
+;; mark as done
+(defun org-mark-as-done ()
+  (interactive)
+  (save-excursion
+    (org-back-to-heading t) ;; Make sure command works even if point is
+                            ;; below target heading
+    (cond ((looking-at "\*+ TODO")
+           (org-todo "DONE"))
+		  ((looking-at "\*+ NEXT")
+           (org-todo "DONE"))
+          ((looking-at "\*+ WAIT")
+           (org-todo "DONE"))
+		  ((looking-at "\*+ PROG")
+           (org-todo "DONE"))
+		  ((looking-at "\*+ DONE")
+           (org-todo "DONE"))
+          (t (message "Undefined TODO state.")))))
+
+(define-key custom-bindings-map (kbd "C-c d") 'org-mark-as-done)
+
+;; keybindings
+(define-key custom-bindings-map (kbd "C-c l") 'org-store-link)
+(define-key custom-bindings-map (kbd "C-c a") 'org-agenda)
+(define-key custom-bindings-map (kbd "C-c c") 'org-capture)
+
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-c t") 'org-todo))
+
+;; Babel
+(setq org-export-use-babel       nil
+      org-confirm-babel-evaluate nil)
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;  '((emacs-lisp . t)
+;;    (python     . t)
+;;    (haskell    . t)
+;;    (clojure    . t)))
+
+;; use provided python interpreter
+(use-package ob-python
+  :ensure nil
+  :after (ob python)
+  :config
+  (setq org-babel-python-command python-shell-interpreter))
+
+;; org roam
+(use-package org-roam
+  :after org
+  :hook (org-roam-mode . org-roam-db-autosync-mode)
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-directory "~/notes/roam")
+  (org-roam-completion-everywhere t)
+  :bind
+  ("C-c n t" . org-roam-buffer-toggle)
+  ("C-c n f" . org-roam-node-find)
+  ("C-c n i" . org-roam-node-insert)
+  ("C-c q"   . org-roam-tag-add)
+  :config
+  ;; Sync my Org Roam database automatically
+  (org-roam-db-autosync-enable)
+  (org-roam-db-autosync-mode)
+  ;; Open Org files in same window
+  (add-to-list 'org-link-frame-setup '(file . find-file)))
+
+;; graph ui
+(use-package org-roam-ui
+    :after org-roam
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+;; static site generator using hugo
+(use-package ox-hugo
+  :after org)
+(with-eval-after-load 'org-capture
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: "))
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(
+                   ,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_FILE_NAME: " fname)
+                   ":END:"
+                   "%?\n")          ;Place the cursor here finally
+                 "\n")))
+
+  (add-to-list 'org-capture-templates
+               '("h"                ;`org-capture' binding + h
+                 "Hugo post"
+                 entry
+                 (file+olp "all-posts.org" "Blog Posts")
+                 (function org-hugo-new-subtree-post-capture-template))))
+
+;; org present
+(defun sgt/org-present-prepare-slide ()
+  ;; Show only top-level headlines
+  (org-overview)
+  ;; Unfold the current entry
+  (org-fold-show-entry)
+  ;; Show only direct subheadings of the slide but don't expand them
+  (org-fold-show-children))
+
+(defun sgt/org-present-start ()
+  ;; Tweak font sizes
+  (setq-local
+   face-remapping-alist '((default (:height 1.5) variable-pitch)
+                          (header-line (:height 3.0) variable-pitch)
+                          (org-document-title (:height 1.75) org-document-title)
+                          (org-code (:height 1.55) org-code)
+                          (org-verbatim (:height 1.55) org-verbatim)
+                          (org-block (:height 1.25) org-block)
+                          (org-block-begin-line (:height 0.7) org-block)))
+  ;; Set a blank header line string to create blank space at the top
+  (setq header-line-format " "))
+
+(defun sgt/org-present-end ()
+  ;; Reset font customizations
+  (setq-local face-remapping-alist '((default variable-pitch default)))
+  ;; Clear the header line string so that it isn't displayed
+  (setq header-line-format nil))
+
+
+(use-package org-present
+  :defer t
+  :hook
+  ((org-present-after-navigate-functions . sgt/org-present-prepare-slide)
+  (org-present-mode                      . sgt/org-present-start)
+  (org-present-mode-quit                 . sgt/org-present-end)))
 
 ;; pasing images from clipboard
 (use-package org-download
