@@ -105,15 +105,7 @@
 
 ;;(add-to-list 'default-frame-alist `(font . "Iosevka-14"))
 (add-to-list 'default-frame-alist `(font . "JetBrains Mono-13"))
-
-;; Use a variable pitch, keeping fixed pitch where it's sensible
-;; (use-package mixed-pitch
-;;   :defer t
-;;   :hook (text-mode . mixed-pitch-mode)
-;;   :config
-;;   (when (member "Source Serif Pro" (font-family-list))
-;;     (set-face-attribute 'variable-pitch nil :family "Source Serif Pro")))
-
+(use-package nerd-icons)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -491,12 +483,25 @@
 
 ;; org bullet stuff
 (setq org-hide-leading-stars t)
-(use-package org-bullets
-  :ensure t
+;;(use-package org-bullets
+;; :ensure t
+;;  :after org
+;;  :init
+;; (add-hook 'org-mode-hook (lambda ()
+;;                             (org-bullets-mode 1))))
+
+(use-package org-superstar
   :after org
-  :init
-  (add-hook 'org-mode-hook (lambda ()
-                             (org-bullets-mode 1))))
+  :config
+  (setq org-superstar-leading-bullet " ")
+  (setq org-superstar-headline-bullets-list '("◆" "◇" "•" "⚬" "●" "○"))
+;;  (setq org-superstar-special-todo-items t) ;; Makes TODO header bullets into boxes
+  (setq org-superstar-todo-bullet-alist '(("TODO"  . 9744)
+                                          ("PROG"  . 9744)
+                                          ("NEXT"  . 9744)
+                                          ("WAIT"  . 9744)
+                                          ("DONE"  . 9745)))
+  :hook (org-mode . org-superstar-mode))
 
 ;; right align tags
 (add-to-list 'font-lock-extra-managed-props 'display)
