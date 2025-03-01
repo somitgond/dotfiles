@@ -7,7 +7,10 @@
 (setq custom-file "~/.config/emacs/custom.el")
 (setq python-shell-virtualenv-path "~/.local/python3/")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; optimizations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; garbage collection
 (use-package gcmh
   :config
@@ -39,6 +42,12 @@
 ;; Prevent Emacs from freezing when updating ELPA.
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+;; Utilize asynchronous processes whenever possible
+(use-package async
+  :ensure t
+  :init
+  (dired-async-mode 1))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;; HOUSE KEEPING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -65,6 +74,7 @@
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+(setq load-prefer-newer t) ;; prefer newer package files
 
 ;; package sources
 (setq package-archives
@@ -139,6 +149,19 @@
 ;; PROGRAMMING-SPECIFIC VISUALS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; hide minor modes
+(use-package diminish
+  :ensure t)
+
+;; ido mode
+(use-package ido
+  :init
+  (ido-mode 1)
+  :config
+  (setq ido-enable-flex-matching nil)
+  (setq ido-create-new-buffer 'always)
+  (setq ido-everywhere t))
+
 ;; styling delimiters
 (use-package rainbow-delimiters
   :hook (prog-mode-hook . rainbow-delimiters-mode))
@@ -160,40 +183,24 @@
   :config
   (setq olivetti-style t))
 
-;; modeline
-(defvar lsp-modeline--code-actions-string nil)
+;; modeline: custom modeline
 
-(setq-default mode-line-format
-  '("%e"
-	(:propertize " " display (raise +0.05)) ;; Top padding
-	(:propertize " " display (raise -0.05)) ;; Bottom padding
-	(:propertize "λ " face font-lock-comment-face)
-	mode-line-frame-identification
-	mode-line-buffer-identification
+;; doom-modeline
+;;(use-package doom-modeline
+;;  :after (nerd-icons)
+;;  :config
+;;  (setq doom-modeline-minor-modes t)
+;;  (setq doom-modeline-major-mode-icon t)
+;;  (setq doom-modeline-enable-word-count t)
+;;  (setq doom-modeline-height 30)
+;;  (setq doom-modeline-bar-width 5)
+;;  (setq doom-modeline-indent-info t)
+;;  (setq doom-modeline-lsp t)
+;;  (setq doom-modeline-github t)
+;;  (setq doom-modeline-buffer-modification-icon t)
+;;  (setq doom-modeline-unicode-fallback t)
+;;  :hook (after-init . doom-modeline-mode))
 
-	;; Version control info
-	(:eval (when-let (vc vc-mode)
-			 ;; Use a pretty branch symbol in front of the branch name
-			 (list (propertize "  B  " 'face 'font-lock-comment-face)
-                   ;; Truncate branch name to 50 characters
-				   (propertize (truncate-string-to-width
-                                (substring vc 5) 50)
-							   'face 'font-lock-comment-face))))
-
-	;; Add space to align to the right
-	(:eval (propertize
-			 " " 'display
-			 `((space :align-to
-					  (-  (+ right right-fringe right-margin)
-						 ,(+ 3
-                             (string-width (or lsp-modeline--code-actions-string ""))
-                             (string-width "%4l:3%c")))))))
-
-    ;; LSP code actions
-    (:eval (or lsp-modeline--code-actions-string ""))
-	
-	;; Line and column numbers
-	(:propertize "%4l:%c" face mode-line-buffer-id)))
 
 ;; adaptive wrap
 (use-package adaptive-wrap
@@ -317,10 +324,6 @@
   (global-company-mode t))
 
 
-;; ido mode
-(ido-mode 1)
-(ido-everywhere 1)
-
 ;; incremental search
 (setq isearch-lazy-highlight t)
 (setq isearch-lazy-count t)
@@ -427,7 +430,7 @@
 
 (use-package org
   :defer t
-  :hook (org-mode . olivetti-mode)
+;;  :hook (org-mode . olivetti-mode)
   :config
   ;; Resize Org headings
   (custom-set-faces
@@ -843,11 +846,11 @@ See `org-capture-templates' for more information."
 ;; pasing images from clipboard
 (use-package org-download
   :after org
-  :bind
-  (:map org-mode-map
-        (("s-t" . org-download-screenshot)
-         ("s-y" . org-download-clipboard))))
-
+;;  :bind
+;;  (:map org-mode-map
+;;        (("s-t" . org-download-screenshot)
+;;         ("s-y" . org-download-clipboard))))
+  )
 ;; markdown compatible tables
 (use-package toc-org
   :after org
@@ -875,12 +878,12 @@ See `org-capture-templates' for more information."
   :defer t)
 
 ;; syntax checker
-(use-package flycheck
-  :defer t
-  :init (global-flycheck-mode)
-  :bind (:map flycheck-mode-map
-              ("C-c ! !" . flycheck-explain-error-at-point))
-  :config (setq flycheck-display-errors-function #'ignore))
+;;(use-package flycheck
+;;  :defer t
+;;  :init (global-flycheck-mode)
+;;  :bind (:map flycheck-mode-map
+;;              ("C-c ! !" . flycheck-explain-error-at-point))
+;;  :config (setq flycheck-display-errors-function #'ignore))
 ;; 
 ;; documentation 
 (use-package eldoc
@@ -1107,6 +1110,13 @@ See `org-capture-templates' for more information."
   (setq python-shell-interpreter "python3.12")
   (add-hook 'python-mode
 			 (lambda () (setq forward-sexp-function nil))))
+
+;; misc
+;; M-s <character> to move to the place of said <character> instead of moving the cursor to it.
+(use-package avy
+   :bind
+   ("M-s" . avy-goto-char))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom keybindings
