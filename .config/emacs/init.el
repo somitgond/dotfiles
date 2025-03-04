@@ -73,8 +73,7 @@
 (require 'package)
 (require 'use-package)
 (require 'use-package-ensure)
-(setq use-package-always-ensure t)
-(setq load-prefer-newer t) ;; prefer newer package files
+
 
 ;; package sources
 (setq package-archives
@@ -149,22 +148,20 @@
 ;; PROGRAMMING-SPECIFIC VISUALS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; hide minor modes
-(use-package diminish
-  :ensure t)
-
 ;; ido mode
-(use-package ido
-  :init
-  (ido-mode 1)
-  :config
-  (setq ido-enable-flex-matching nil)
-  (setq ido-create-new-buffer 'always)
-  (setq ido-everywhere t))
+;;(use-package ido
+;;  :init
+;;  (ido-mode 1)
+;;  :config
+;;  (setq ido-enable-flex-matching nil)
+;;  (setq ido-create-new-buffer 'always)
+;;  (setq ido-everywhere t))
 
 ;; styling delimiters
 (use-package rainbow-delimiters
-  :hook (prog-mode-hook . rainbow-delimiters-mode))
+  :hook (prog-mode-hook . rainbow-delimiters-mode)
+  :init
+  (rainbow-delimiters-mode 1))
 
 (show-paren-mode t) ;; Highlight matching parentheses
 
@@ -331,8 +328,8 @@
       lazy-count-prefix-format "(%s of %s matches) ")
 
 ;; use mx completion
-(require 'amx)
-(amx-mode 1)
+;;(require 'amx)
+;;(amx-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; search
@@ -359,11 +356,54 @@
   :defer t
   :bind (:map custom-bindings-map
               ("M-g i" . imenu-list-smart-toggle)))
+;; vertico
+(use-package vertico
+  :defer t
+  :init
+  (vertico-mode)
+  :config
+  (vertico-mode)
+  (vertico-multiform-mode)
+  (setq read-extended-command-predicate       'command-completion-default-include-p
+        read-file-name-completion-ignore-case t   ; Ignore case of file names
+        read-buffer-completion-ignore-case    t   ; Ignore case in buffer completion
+        completion-ignore-case                t)) ; Ignore case in completion
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Optionally use the `orderless' completion style.
+(use-package orderless
+  :custom
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 ;; marginalia
 (use-package marginalia
   :init 
   (marginalia-mode 1))
+
+;; consult
+;(use-package consult
+;  :bind (:map custom-bindings-map
+;;              ("C-s"     . consult-line)
+;;              ("C-M-s"   . consult-ripgrep)
+;              ("C-x b"   . consult-buffer)
+;              ("C-x C-b" . consult-buffer)
+;              ("M-g g"   . consult-goto-line)
+;              ("M-g t"   . consult-imenu)
+;             ("M-g a"   . consult-imenu-multi)))
+
+;; use ctrlf
+(use-package ctrlf
+  :init
+  (ctrlf-mode +1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; version control
