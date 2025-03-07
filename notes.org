@@ -1,6 +1,21 @@
 
 * notes
-
+** Swtiching from x to wayland in Gentoo
+**** applications: dev-libs/wayland gui-wm/sway dev-libs/bemenu gui-apps/foot gui-apps/swaylock gui-apps/swayidle gui-apps/grim
+	 - use flags: 
+ 	 - wayland :
+	 - wlroots : drm libinput session
+	 - (wm) sway: swaybar
+	 - (terminal emulator) foot: grapheme-clustering
+	 - (application launcher) bemenu
+	 - (status bar) waybar
+	 - (screenlock) swaylock
+	 - (idle management) swayidle
+	 - (multi-display configuration) kanshi
+	 - (screenshot) grim or slurp or swappyr
+	 - (screen recorder) wf-recorder
+	 - (image view) imv
+** Misc
 *** changing altgr to alt in colemak_dh layout in linux
 The symbols file is at /usr/share/X11/xkb/symbols/us. I commented this line out in my copy
 ```
@@ -10,9 +25,6 @@ include "level3(ralt_switch)"
 *** home row modes
 - https://github.com/jtroo/kanata
 - https://shom.dev/start/using-kanata-to-remap-any-keyboard/
-
-
-
 * Some Projects that I find interesting
 - Neatroff 
 - nextvi
