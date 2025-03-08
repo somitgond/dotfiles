@@ -4,9 +4,12 @@
 #
 # Read `man 5 sway` for a complete reference.
 
+# dbus 
+exec --no-startup-id dbus-update-activation-environment --all
+
 ### Variables
 #
-font pango:JetBrains Mono Medium 10
+font pango:JetBrains Mono Bold 11
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
 # Home row direction keys, like vim
@@ -17,7 +20,7 @@ set $right l
 # Your preferred terminal emulator
 ## foot
 exec foot -s
-set $term footclient
+set $term footclient -e tmux
 #set $term foot
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
@@ -25,7 +28,7 @@ set $term footclient
 #set $menu dmenu_path | wmenu | xargs swaymsg exec --
 # use bemenu
 #set $menu bemenu-run --no-exec | xargs -r swaymsg exec --
-set $menu bemenu-run  --list 5 --ignorecase --fn 'JetBrains Mono Medium 12'  --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
+set $menu bemenu-run  --list 5 --ignorecase --fn 'JetBrains Mono Bold 12'  --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
@@ -107,6 +110,9 @@ output * bg /home/jack/.wallpapers/b-544.jpg fill
     bindsym $mod+Shift+0 move container to workspace number 10
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
+	
+	# Toggle workspaces
+	bindsym $mod+Tab workspace back_and_forth
 #
 # Layout stuff:
 #
@@ -178,7 +184,8 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command while date +[$(cat /sys/class/power_supply/BAT0/capacity)\ $(cat /sys/class/power_supply/BAT1/capacity)]\ '%a %m-%d %H:%M'; do sleep 30; done
+    status_command while date +[$(cat /sys/class/power_supply/BAT0/capacity)$(cat /sys/class/power_supply/BAT0/status | cut -c1)\ $(cat /sys/class/power_supply/BAT1/capacity)$(cat /sys/class/power_supply/BAT1/status | cut -c1)]\ '%a %m-%d %H:%M'; do sleep 30; done
+
     colors {
 			# gruvbox color scheme
 			background #3c3836
@@ -214,6 +221,10 @@ bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+
 bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
 bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_SOURCE@ toggle
+#bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+#bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+#bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+#bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # reload .Xresources
 exec_always test -f ~/.Xresources && xrdb -merge ~/.Xresources
@@ -272,6 +283,21 @@ bindsym --to-code $mod+Shift+r reload
 ## pipewire
 exec gentoo-pipewire-launcher restart &
 
+# start dunst
+exec dunst &
+
+# hide mouse cursor when not in use
+#unclutter &
+
+# setting brightness of screen
+exec brightnessctl s 10% &
+
+#xwayland disable
+
+# xdg stuff
+exec killall xdg-desktop-portal xdg-desktop-portal-wlr
+exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal &
+exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal-wlr &
 
 
 include /etc/sway/config.d/*
