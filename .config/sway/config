@@ -212,7 +212,6 @@ input "type:keyboard" {
 input "type:touchpad" {
     tap enabled
     natural_scroll enabled
-
 }
 
 # brightness
@@ -228,6 +227,10 @@ bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_SOURCE@ toggle
 #bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 #bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 #bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+#screenshot
+set $screenshot grim -g "$(slurp)" - | swappy -f -
+bindsym $mod+x exec $screenshot
 
 # reload .Xresources
 exec_always test -f ~/.Xresources && xrdb -merge ~/.Xresources
@@ -269,18 +272,16 @@ titlebar_border_thickness 1
 #hide_edge_borders none
 
 # Borders
-default_border pixel 1
+default_border pixel 2
 smart_borders on
 
 # Gaps
 smart_gaps on
-gaps inner 4
-gaps outer 3
-
+gaps inner 6
+gaps outer 0
 
 # click to focus
 focus_follows_mouse no
-
 
 # custom keybindings
 # Reload the configuration file
