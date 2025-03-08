@@ -1,0 +1,2 @@
+# Make /bin/sh a symlink to dash from app-shells/dash
+app-alternatives/sh -bash dash
