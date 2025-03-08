@@ -124,11 +124,14 @@ output * bg /home/jack/.wallpapers/b-544.jpg fill
 
     # Switch the current container between different layout styles
     bindsym $mod+s layout stacking
-    bindsym $mod+w layout tabbed
+    bindsym $mod+w layout tabbed 
     bindsym $mod+e layout toggle split
 
     # Make the current focus fullscreen
-    bindsym $mod+f fullscreen
+    bindsym $mod+f fullscreen toggle
+
+	# toggle all 
+	bindsym $mod+t layout toggle all 
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
@@ -274,6 +277,11 @@ smart_gaps on
 gaps inner 4
 gaps outer 3
 
+
+# click to focus
+focus_follows_mouse no
+
+
 # custom keybindings
 # Reload the configuration file
 bindsym --to-code $mod+Shift+r reload
@@ -298,6 +306,13 @@ exec brightnessctl s 10% &
 exec killall xdg-desktop-portal xdg-desktop-portal-wlr
 exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal &
 exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal-wlr &
+
+set $gtk_theme Gruvbox-Dark
+exec_always {
+  export GTK_THEME=$gtk_theme
+  export XCURSOR_THEME=Adwaita
+  export XCURSOR_SIZE=12
+}
 
 
 include /etc/sway/config.d/*
