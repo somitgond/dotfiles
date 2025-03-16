@@ -222,6 +222,8 @@ input "type:keyboard" {
     xkb_options caps:swapescape
     repeat_delay 250
     repeat_rate 50
+	xkb_capslock disabled
+	xkb_numlock disabled
 }
 
 # enable touch to click
@@ -366,11 +368,14 @@ set $gnome-schema org.gnome.desktop.interface
 exec_always {
     gsettings set $gnome-schema gtk-theme 'Gruvbox-Dark'
     gsettings set $gnome-schema icon-theme 'ePapirus-Dark'
-    gsettings set $gnome-schema cursor-theme 'Adwaita-Dark'
+    #gsettings set $gnome-schema cursor-theme 'Adwaita-Dark'
     gsettings set $gnome-schema font-name 'Sans 10'
 }
 
-# cursor theme
-#seat seat0 xcursor_theme custom_cursor_theme custom_cursor_size
+# cursor
+## hide cursor
+seat seat0 hide_cursor 5000
+seat seat0 hide_cursor when-typing enable
+seat seat0 xcursor_theme 'Adwaita' 5
 
 #include /etc/sway/config.d/*
