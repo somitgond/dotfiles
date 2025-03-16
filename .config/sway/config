@@ -8,31 +8,27 @@
 exec --no-startup-id dbus-update-activation-environment --all
 
 ### Variables
-#
+set $term footclient -e tmux
+set $screenshot grim -g "$(slurp)" - | swappy -f -
+set $emacs emacsclient -c -a 'emacs'
+set $filemanager pcmanfm
+set $menu bemenu-run --line-height 26 --list 5 --ignorecase --fn 'JetBrains Mono Bold 12'  --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
+
 font pango:JetBrains Mono Bold 11
+
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
+
 # Home row direction keys, like vim
 set $left h
 set $down j
 set $up k
 set $right l
-# Your preferred terminal emulator
-## foot
-exec foot -s
-set $term footclient -e tmux
-#set $term foot
-# Your preferred application launcher
-# Note: pass the final command to swaymsg so that the resulting window can be opened
-# on the original workspace that the command was run on.
-#set $menu dmenu_path | wmenu | xargs swaymsg exec --
-# use bemenu
-#set $menu bemenu-run --no-exec | xargs -r swaymsg exec --
-set $menu bemenu-run  --list 5 --ignorecase --fn 'JetBrains Mono Bold 12'  --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
-### Output configuration
-#
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /home/jack/.wallpapers/b-544.jpg fill
+
+## set a random wallpaper
+set $wallpapers_path $HOME/.wallpapers
+output * bg $(find $wallpapers_path -type f | shuf -n 1) fill
+#output * bg /home/jack/.wallpapers/b-544.jpg fill
 
 ### Key bindings
 #
@@ -46,6 +42,13 @@ output * bg /home/jack/.wallpapers/b-544.jpg fill
 
     # Start your launcher
     bindsym $mod+d exec $menu
+
+	# swaylocn
+	bindsym $mod+control+l exec swaylock --ignore-empty-password --show-failed-attempts \
+	    --color 1e1e1e --inside-color cccccc --ring-color ffffff \
+    	--inside-clear-color 11a8cd --ring-clear-color 29b8db \
+	    --inside-ver-color 2472c8 --ring-ver-color 3b8eea \
+	    --inside-wrong-color cd3131 --ring-wrong-color f14c4c
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -86,6 +89,10 @@ output * bg /home/jack/.wallpapers/b-544.jpg fill
 #
 # Workspaces:
 #
+	# cycle between workspaces
+	bindsym $mod+control+Right workspace next
+	bindsym $mod+control+Left workspace prev
+    
     # Switch to workspace
     bindsym $mod+1 workspace number 1
     bindsym $mod+2 workspace number 2
@@ -125,13 +132,13 @@ output * bg /home/jack/.wallpapers/b-544.jpg fill
     # Switch the current container between different layout styles
     bindsym $mod+s layout stacking
     bindsym $mod+w layout tabbed 
-    bindsym $mod+e layout toggle split
+    bindsym $mod+t layout toggle split
 
     # Make the current focus fullscreen
     bindsym $mod+f fullscreen toggle
 
 	# toggle all 
-	bindsym $mod+t layout toggle all 
+	bindsym $mod+Shift+t layout toggle all 
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
@@ -178,13 +185,20 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
+# adding features
+## show htop
+#bindsym control+shift+escape exec $term htop
+#bindsym control+shift+escape exec $term -a 'flying-foot' htop
+#for_window [app_id="flying-foot"] floating enable
 #
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
 bar {
     position top
-
+	height 22
+	font pango:JetBrains Mono Bold 11
+	#gaps 3
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
     status_command while date +[$(cat /sys/class/power_supply/BAT0/capacity)$(cat /sys/class/power_supply/BAT0/status | cut -c1)\ $(cat /sys/class/power_supply/BAT1/capacity)$(cat /sys/class/power_supply/BAT1/status | cut -c1)]\ '%a %m-%d %H:%M'; do sleep 30; done
@@ -206,12 +220,17 @@ input "type:keyboard" {
     xkb_layout us
     xkb_variant colemak_dh
     xkb_options caps:swapescape
+    repeat_delay 250
+    repeat_rate 50
 }
 
 # enable touch to click
 input "type:touchpad" {
-    tap enabled
-    natural_scroll enabled
+    tap enabled         # enables click-on-tap
+    tap_button_map lrm  # tap with 1 finger = left click, 2 fingers = right click, 3 fingers = middle click
+    dwt enabled         # disable (touchpad) while typing
+    dwtp enabled        # disable (touchpad) while track pointing
+    natural_scroll enabled # scroll screen in same direction as scroll direction
 }
 
 # brightness
@@ -220,17 +239,14 @@ bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 # sound
 bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+
-bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+ -l 1.1
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%- -l 1.1
 bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_SOURCE@ toggle
 #bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 #bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 #bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 #bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
-#screenshot
-set $screenshot grim -g "$(slurp)" - | swappy -f -
-bindsym $mod+x exec $screenshot
 
 # reload .Xresources
 exec_always test -f ~/.Xresources && xrdb -merge ~/.Xresources
@@ -266,7 +282,7 @@ client.urgent            $col_text_dark         $col_urgent            $col_text
 titlebar_padding 1
 title_align center
 titlebar_border_thickness 1
-# disable title bars
+#disable title bars
 #default_border none
 #default_floating_border none
 #hide_edge_borders none
@@ -284,16 +300,38 @@ gaps outer 0
 focus_follows_mouse no
 
 # custom keybindings
-# Reload the configuration file
+## Reload the configuration file
 bindsym --to-code $mod+Shift+r reload
 
+## screenshot
+bindsym $mod+x exec $screenshot
+#
+# Screen capture
+#
+#set $ps1 Print
+#set $ps2 Control+Print
+#set $ps3 Alt+Print
+#set $ps4 Alt+Control+Print
+#set $psf $(xdg-user-dir PICTURES)/ps_$(date +"%Y%m%d%H%M%S").png
+ 
+#bindsym $ps1 exec grim - | wl-copy
+#bindsym $ps2 exec grim -g "$(slurp)" - | wl-copy
+#bindsym $ps3 exec grim $psf
+#bindsym $ps4 exec grim -g "$(slurp)" $psf
+
+## emacs
+bindsym $mod+e exec $emacs
+
 # startup applications
+## foot
+exec foot -s
+exec emacs --daemon
 
 ## pipewire
 exec gentoo-pipewire-launcher restart &
 
 # start dunst
-exec dunst &
+#exec dunst 
 
 # hide mouse cursor when not in use
 #unclutter &
@@ -301,19 +339,38 @@ exec dunst &
 # setting brightness of screen
 exec brightnessctl s 10% &
 
+# mako : notification daemon
+exec mako
+
+## xwayland stuff
 #xwayland disable
+for_window [shell="xwayland"] title_format "[XWayland] %title"
+
+# swayidle
+#exec swayidle -w \
+#	timeout 1800 'swaylock -f' \
+#	timeout 1805 'swaymsg "output * power off"' \
+#		resume 'swaymsg "output * power on"'
+
+## save clipboard even after window closes
+## requires clipman
+#exec wl-paste -t text --watch clipman store --no-persist
 
 # xdg stuff
 exec killall xdg-desktop-portal xdg-desktop-portal-wlr
 exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal &
 exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal-wlr &
 
-set $gtk_theme Gruvbox-Dark
+# setting gtk theme
+set $gnome-schema org.gnome.desktop.interface
 exec_always {
-  export GTK_THEME=$gtk_theme
-  export XCURSOR_THEME=Adwaita
-  export XCURSOR_SIZE=12
+    gsettings set $gnome-schema gtk-theme 'Gruvbox-Dark'
+    gsettings set $gnome-schema icon-theme 'ePapirus-Dark'
+    gsettings set $gnome-schema cursor-theme 'Adwaita-Dark'
+    gsettings set $gnome-schema font-name 'Sans 10'
 }
 
+# cursor theme
+#seat seat0 xcursor_theme custom_cursor_theme custom_cursor_size
 
-include /etc/sway/config.d/*
+#include /etc/sway/config.d/*
