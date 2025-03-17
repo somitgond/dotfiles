@@ -223,8 +223,6 @@ bar {
 }
 
 # keyboard
-#bindsym $mod+alt+enter input type:keyboard xkb_switch_layout next
-
 # or input <identifier>
 input "type:keyboard" {
     xkb_layout us,us
@@ -245,7 +243,7 @@ input "1:1:kanata" {
 	xkb_numlock disabled
 }
 
-# enable touch to click
+# touchpad
 input "type:touchpad" {
     tap enabled         # enables click-on-tap
     tap_button_map lrm  # tap with 1 finger = left click, 2 fingers = right click, 3 fingers = middle click
