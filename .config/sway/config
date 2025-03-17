@@ -92,7 +92,14 @@ output * bg $(find $wallpapers_path -type f | shuf -n 1) fill
 	# cycle between workspaces
 	bindsym $mod+control+Right workspace next
 	bindsym $mod+control+Left workspace prev
-    
+	bindsym $mod+n workspace next_on_output
+    bindsym $mod+p workspace prev_on_output
+
+	# Move the current workspace to the next output
+	# (effectively toggles when you only have two outputs)
+	bindsym $mod+shift+x move workspace to output next
+	bindsym $mod+x focus output next
+
     # Switch to workspace
     bindsym $mod+1 workspace number 1
     bindsym $mod+2 workspace number 2
@@ -120,6 +127,7 @@ output * bg $(find $wallpapers_path -type f | shuf -n 1) fill
 	
 	# Toggle workspaces
 	bindsym $mod+Tab workspace back_and_forth
+	
 #
 # Layout stuff:
 #
@@ -215,12 +223,23 @@ bar {
 }
 
 # keyboard
+#bindsym $mod+alt+enter input type:keyboard xkb_switch_layout next
+
 # or input <identifier>
 input "type:keyboard" {
-    xkb_layout us
-    xkb_variant colemak_dh
-    xkb_options caps:swapescape
-    repeat_delay 250
+    xkb_layout us,us
+    xkb_variant colemak_dh,
+    xkb_options caps:escape,grp:win_space_toggle
+    repeat_delay 300
+    repeat_rate 50
+	xkb_capslock disabled
+	xkb_numlock disabled
+}
+input "1:1:kanata" {
+    xkb_layout us,us
+    xkb_variant colemak_dh,
+    xkb_options caps:escape,grp:win_space_toggle
+    repeat_delay 300
     repeat_rate 50
 	xkb_capslock disabled
 	xkb_numlock disabled
@@ -233,6 +252,7 @@ input "type:touchpad" {
     dwt enabled         # disable (touchpad) while typing
     dwtp enabled        # disable (touchpad) while track pointing
     natural_scroll enabled # scroll screen in same direction as scroll direction
+	accel_profile adaptive
 }
 
 # brightness
@@ -241,8 +261,8 @@ bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 # sound
 bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+ -l 1.1
-bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%- -l 1.1
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+ -l 1.0
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%- -l 1.0
 bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_SOURCE@ toggle
 #bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 #bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
@@ -280,18 +300,15 @@ client.focused_inactive  $col_focused_inactive  $col_focused_inactive  $col_text
 client.unfocused         $col_unfocused_border  $col_unfocused         $col_text_light  $col_unfocused         $col_unfocused
 client.urgent            $col_text_dark         $col_urgent            $col_text_dark   $col_urgent            $col_urgent
 
+
+# Borders
+default_border none
+smart_borders on
+
 # Titlebar
 titlebar_padding 1
 title_align center
 titlebar_border_thickness 1
-#disable title bars
-#default_border none
-#default_floating_border none
-#hide_edge_borders none
-
-# Borders
-default_border pixel 2
-smart_borders on
 
 # Gaps
 smart_gaps on
@@ -306,7 +323,7 @@ focus_follows_mouse no
 bindsym --to-code $mod+Shift+r reload
 
 ## screenshot
-bindsym $mod+x exec $screenshot
+bindsym Print exec $screenshot
 #
 # Screen capture
 #
@@ -368,14 +385,19 @@ set $gnome-schema org.gnome.desktop.interface
 exec_always {
     gsettings set $gnome-schema gtk-theme 'Gruvbox-Dark'
     gsettings set $gnome-schema icon-theme 'ePapirus-Dark'
-    #gsettings set $gnome-schema cursor-theme 'Adwaita-Dark'
+    gsettings set $gnome-schema cursor-theme 'Adwaita-Dark'
     gsettings set $gnome-schema font-name 'Sans 10'
 }
 
 # cursor
-## hide cursor
+## hide cursor after 5 seconds
 seat seat0 hide_cursor 5000
-seat seat0 hide_cursor when-typing enable
-seat seat0 xcursor_theme 'Adwaita' 5
 
+## hide cursor when typing
+seat seat0 hide_cursor when-typing enable
+
+## cursor theme and size
+#seat seat0 xcursor_theme 'Adwaita' 5
+
+# read config files 
 #include /etc/sway/config.d/*
