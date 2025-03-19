@@ -5,7 +5,8 @@
 # Read `man 5 sway` for a complete reference.
 
 # dbus 
-exec --no-startup-id dbus-update-activation-environment --all
+#exec --no-startup-id dbus-update-activation-environment --all
+exec dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP='sway'
 
 ### Variables
 set $term footclient -e tmux
@@ -13,6 +14,7 @@ set $screenshot grim -g "$(slurp)" - | swappy -f -
 set $emacs emacsclient -c -a 'emacs'
 set $filemanager pcmanfm
 set $menu bemenu-run --line-height 26 --list 5 --ignorecase --fn 'JetBrains Mono Bold 12'  --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
+set $menu_dmenu dmenu_run -fn "JetBrains Mono:style=Bold:size=11:antialias=true:autohint=true" -nb "#1c1c1c" -nf "#d5c4a1" -sb "#444444" -sf "#87af87" 
 
 font pango:JetBrains Mono Bold 11
 
@@ -41,7 +43,7 @@ output * bg $(find $wallpapers_path -type f | shuf -n 1) fill
     bindsym $mod+Shift+q kill
 
     # Start your launcher
-    bindsym $mod+d exec $menu
+    bindsym $mod+d exec $menu_dmenu
 
 	# swaylocn
 	bindsym $mod+control+l exec swaylock --ignore-empty-password --show-failed-attempts \
@@ -227,7 +229,7 @@ bar {
 input "type:keyboard" {
     xkb_layout us,us
     xkb_variant colemak_dh,
-    xkb_options caps:escape,grp:win_space_toggle
+    xkb_options caps:swapescape,grp:shift_caps_toggle
     repeat_delay 300
     repeat_rate 50
 	xkb_capslock disabled
@@ -236,9 +238,7 @@ input "type:keyboard" {
 input "1:1:kanata" {
     xkb_layout us,us
     xkb_variant colemak_dh,
-    xkb_options caps:escape,grp:win_space_toggle
-    repeat_delay 300
-    repeat_rate 50
+    xkb_options caps:swapescape,grp:shift_caps_toggle
 	xkb_capslock disabled
 	xkb_numlock disabled
 }
