@@ -15,6 +15,7 @@
 	 - (screenshot) grim or slurp or swappyr
 	 - (screen recorder) wf-recorder
 	 - (image view) imv
+
 ** Misc
 *** changing altgr to alt in colemak_dh layout in linux
 The symbols file is at /usr/share/X11/xkb/symbols/us. I commented this line out in my copy
@@ -25,6 +26,8 @@ include "level3(ralt_switch)"
 *** home row modes
 - https://github.com/jtroo/kanata
 - https://shom.dev/start/using-kanata-to-remap-any-keyboard/
+*** switching output off in sway
+    swaymsg output eDP-1 disable
 * Some Projects that I find interesting
 - Neatroff 
 - nextvi
