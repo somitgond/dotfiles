@@ -20,3 +20,54 @@ x11-libs/wxGTK gstreamer
 # required by www-client/chromium-133.0.6943.126::gentoo
 # required by chromium (argument)
 >=net-libs/nodejs-22.13.1 inspector
+# required by dev-python/setuptools-75.8.2::gentoo
+# required by dev-libs/glib-2.82.5::gentoo[introspection]
+# required by gui-libs/gtk-4.14.4-r1::gentoo
+# required by app-crypt/gcr-4.2.1::gentoo[gtk]
+# required by app-crypt/pinentry-1.3.1-r1::gentoo[gtk]
+# required by app-crypt/gnupg-2.4.7-r1::gentoo
+# required by app-portage/gemato-20.6::gentoo[gpg]
+# required by sys-apps/portage-3.0.67::gentoo[rsync-verify,-build]
+# required by app-portage/gentoolkit-0.6.8::gentoo
+# required by @selected
+# required by @world (argument)
+>=dev-python/packaging-24.2 python_targets_python3_13
+# required by dev-python/ply-3.11-r2::gentoo
+# required by media-libs/mesa-24.3.4-r1::gentoo[video_cards_intel]
+# required by gui-libs/gtk-4.14.4-r1::gentoo[X]
+# required by app-crypt/gcr-4.2.1::gentoo[gtk]
+# required by app-crypt/pinentry-1.3.1-r1::gentoo[gtk]
+# required by app-crypt/gnupg-2.4.7-r1::gentoo
+# required by app-portage/gemato-20.6::gentoo[gpg]
+# required by sys-apps/portage-3.0.67::gentoo[-build,rsync-verify]
+# required by app-portage/gentoolkit-0.6.8::gentoo
+# required by @selected
+# required by @world (argument)
+>=dev-python/gpep517-16 python_targets_python3_13
+# required by dev-python/wheel-0.45.1::gentoo
+# required by dev-python/setuptools-75.8.2::gentoo
+# required by dev-libs/glib-2.82.5::gentoo[introspection]
+# required by gui-libs/gtk-4.14.4-r1::gentoo
+# required by app-crypt/gcr-4.2.1::gentoo[gtk]
+# required by app-crypt/pinentry-1.3.1-r1::gentoo[gtk]
+# required by app-crypt/gnupg-2.4.7-r1::gentoo
+# required by app-portage/gemato-20.6::gentoo[gpg]
+# required by sys-apps/portage-3.0.67::gentoo[-build,rsync-verify]
+# required by app-portage/gentoolkit-0.6.8::gentoo
+# required by @selected
+# required by @world (argument)
+>=dev-python/flit-core-3.11.0 python_targets_python3_13
+# required by dev-python/gpep517-16::gentoo
+# required by dev-python/markupsafe-3.0.2::gentoo
+# required by dev-python/jinja2-3.1.6::gentoo
+# required by sys-apps/systemd-utils-255.15-r1::gentoo[python_single_target_python3_12]
+# required by virtual/libudev-251-r2::gentoo[-systemd]
+# required by media-libs/libsdl2-2.32.0::gentoo
+# required by dev-libs/zziplib-0.13.78-r1::gentoo[sdl]
+# required by app-text/texlive-core-2024-r1::gentoo
+# required by virtual/tex-base-0::gentoo
+# required by app-text/lcdf-typetools-2.110::gentoo[kpathsea]
+# required by app-text/texlive-2024::gentoo
+# required by @selected
+# required by @world (argument)
+>=dev-python/installer-0.7.0 python_targets_python3_13
