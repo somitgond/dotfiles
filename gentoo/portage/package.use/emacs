@@ -1,1 +1,1 @@
-app-editors/emacs -X gtk -mailutils motif m17n-lib imagemagick gmp threads dynamic-loading gui jit json libxml2 xft tree-sitter webp
+app-editors/emacs athena Xaw3d -gtk -motif -mailutils sqlite m17n-lib imagemagick gmp threads dynamic-loading gui jit json libxml2 xft tree-sitter webp
