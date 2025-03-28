@@ -9,7 +9,8 @@
 exec dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP='sway'
 
 ### Variables
-set $term footclient -e tmux
+#set $term footclient -e tmux
+set $term foot -e tmux
 set $screenshot grim -g "$(slurp)" - | swappy -f -
 set $emacs emacsclient -c -a 'emacs'
 set $filemanager pcmanfm
@@ -208,6 +209,8 @@ bar {
     position top
 	height 22
 	font pango:JetBrains Mono Bold 11
+	output *
+	mode hide
 	#gaps 3
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
@@ -239,6 +242,8 @@ input "1:1:kanata" {
     xkb_layout us,us
     xkb_variant colemak_dh,
     xkb_options caps:swapescape,grp:shift_caps_toggle
+    repeat_delay 300
+    repeat_rate 50
 	xkb_capslock disabled
 	xkb_numlock disabled
 }
@@ -321,7 +326,7 @@ focus_follows_mouse no
 bindsym --to-code $mod+Shift+r reload
 
 ## screenshot
-bindsym Print exec $screenshot
+bindsym alt+Print exec $screenshot
 #
 # Screen capture
 #
@@ -337,15 +342,15 @@ bindsym Print exec $screenshot
 #bindsym $ps4 exec grim -g "$(slurp)" $psf
 
 ## emacs
-bindsym $mod+e exec $emacs
+bindsym $mod+alt+e exec $emacs
 
 # startup applications
 ## foot
-exec foot -s
+#exec foot -s
 exec emacs --daemon
 
 ## pipewire
-exec gentoo-pipewire-launcher restart &
+#exec gentoo-pipewire-launcher restart &
 
 # start dunst
 #exec dunst 
