@@ -5,8 +5,10 @@
 # Super+Shift+Return to start an instance of foot (https://codeberg.org/dnkl/foot)
 
 riverctl map normal Super Return spawn "foot -e tmux"
-riverctl map normal Super d spawn "dmenu_run -fn 'JetBrains Mono:style=Bold:size=11:antialias=true:autohint=true' -nb '#1c1c1c' -nf '#d5c4a1' -sb '#444444' -sf '#87af87'"
-
+#riverctl map normal Super d spawn "dmenu_run -fn 'JetBrains Mono:style=Bold:size=11:antialias=true:autohint=true' -nb '#1c1c1c' -nf '#d5c4a1' -sb '#444444' -sf '#87af87'"
+riverctl map normal Super d spawn "mew-run -f 'JetBrains Mono:style=Bold:size=11:antialias=true:autohint=true' -nb '#1c1c1c' -nf '#d5c4a1' -sb '#444444' -sf '#87af87'"
+riverctl map normal Super+Control L spawn "swaylock"
+riverctl map normal Alt Print spawn 'grim -g "$(slurp)" - | swappy -f -'
 # Super+Q to close the focused view
 riverctl map normal Super Q close
 
@@ -163,6 +165,9 @@ do
     riverctl map $mode None XF86MonBrightnessDown spawn 'brightnessctl set 5%-'
 done
 
+# use Super + tab to switch between previous active tags
+riverctl map normal Super Tab focus-previous-tags
+riverctl map normal Super+Shift Tab send-to-previous-tags
 # Set background and border color
 riverctl background-color 0x002b36
 riverctl border-color-focused 0x93a1a1
@@ -173,7 +178,7 @@ riverctl keyboard-layout -options "caps:swapescape,grp:shift_caps_toggle" "us(co
 riverctl set-repeat 50 300
 riverctl hide-cursor timeout 5000
 riverctl hide-cursor when-typing enable
-riverctl xcursor-theme Adwaita 12
+riverctl xcursor-theme Adwaita 8
 riverctl set-cursor-warp on-output-change
 # touchpad
 riverctl input "pointer-1739-0-Synaptics_TM3276-022" natural-scroll enabled
@@ -197,9 +202,11 @@ riverctl rule-add -app-id 'float*' -title 'foo' float
 # Set the default layout generator to be rivertile and start it.
 # River will send the process group of the init executable SIGTERM on exit.
 riverctl default-layout rivertile
-rivertile -view-padding 3 -outer-padding 0 &
+rivertile -view-padding 2 -outer-padding 0 &
+riverctl border-width 2
 
 riverctl spawn "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=river"
-riverctl spawn "slstatus -s | dam"
+#riverctl spawn "slstatus -s | dam"
+riverctl spawn "river-tag-overlay --anchors 1:0:0:0 --timeout 400"
 # set wallpaper
-riverctl spawn "swaybg -m fill -i $(find ~/.wallpapers/ -type f | shuf -n 1)"
+#riverctl spawn "swaybg -m fill -i $(find ~/.wallpapers/ -type f | shuf -n 1)"
