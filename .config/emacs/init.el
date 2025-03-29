@@ -11,13 +11,6 @@
 ;; optimizations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; garbage collection
-(use-package gcmh
-  :config
-  (setq gcmh-idle-delay 5
-        gcmh-high-cons-threshold (* 100 1024 1024))  ; 100mb
-  (gcmh-mode 1))
-
 ;; We can set the file-name-handler-alist, which is supposed to help startup times a little.
 (setq file-name-handler-alist-original file-name-handler-alist)
 (setq file-name-handler-alist nil)
@@ -27,10 +20,10 @@
 (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 
 ;; Disable warnings about obsolete functions when compiling.
-(eval-when-compile
-  (dolist (sym '(cl-flet lisp-complete-symbol))
-    (setplist sym (use-package-plist-delete
-                   (symbol-plist sym) 'byte-obsolete-info))))
+;(eval-when-compile
+;  (dolist (sym '(cl-flet lisp-complete-symbol))
+;    (setplist sym (use-package-plist-delete
+;                   (symbol-plist sym) 'byte-obsolete-info))))
 
 ;; This is an optimisation borrowed from Doom Emacs’ core.el.
 (setq which-func-update-delay 1.0)
@@ -109,7 +102,7 @@
       display-time-default-load-average nil     ;; Don't show me load time
       scroll-margin                     0       ;; Space between top/bottom
       use-dialog-box                    nil)    ;; Disable dialog
-
+(set-frame-parameter nil 'undecorated t)
 ;; fonts
 
 ;;(add-to-list 'default-frame-alist `(font . "Iosevka-14"))
@@ -158,10 +151,10 @@
 ;;  (setq ido-everywhere t))
 
 ;; styling delimiters
-(use-package rainbow-delimiters
-  :hook (prog-mode-hook . rainbow-delimiters-mode)
-  :init
-  (rainbow-delimiters-mode 1))
+;(use-package rainbow-delimiters
+;  :hook (prog-mode-hook . rainbow-delimiters-mode)
+;  :init
+;  (rainbow-delimiters-mode 1))
 
 (show-paren-mode t) ;; Highlight matching parentheses
 
@@ -200,9 +193,9 @@
 
 
 ;; adaptive wrap
-(use-package adaptive-wrap
-  :defer t
-  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
+;(use-package adaptive-wrap
+;  :defer t
+;  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 
 ;; writeroom mode: distraction free writing
 (use-package writeroom-mode
@@ -1073,11 +1066,11 @@ See `org-capture-templates' for more information."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; language aware folding
-(use-package origami
-   :defer t
-   :hook (prog-mode . origami-mode)
-   :bind (:map origami-mode-map
-               ("C-<" . origami-toggle-node)))
+;(use-package origami
+;   :defer t
+;   :hook (prog-mode . origami-mode)
+;   :bind (:map origami-mode-map
+;               ("C-<" . origami-toggle-node)))
 
 ;; boost lsp: helps speed up LSP mode (and Eglot!) by converting JSON directly into elisp bytecode and by separating reading and writing into different threads.
 
