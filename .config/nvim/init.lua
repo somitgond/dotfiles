@@ -11,7 +11,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- Make line numbers default
@@ -165,17 +165,17 @@ require("lazy").setup({
 	  opts_extend = { "sources.default" }
 	},
 	{ -- You can easily change to a different colorscheme.
-		"rebelot/kanagawa.nvim",
+		"ellisonleao/gruvbox.nvim",
 		priority = 1000, -- Make sure to load this before all the other start plugins.
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
-			require("kanagawa").setup({
+			require("gruvbox").setup({
 				styles = {
 					comments = { italic = false }, -- Disable italics in comments
 				},
 			})
 
-			vim.cmd.colorscheme("kanagawa")
+			vim.cmd.colorscheme("gruvbox")
 		end,
 	},
 	{ -- Collection of various small independent plugins/modules
