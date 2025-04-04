@@ -1,4 +1,3 @@
-
 -- tab
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -79,15 +78,19 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
+vim.keymap.set("n", "<leader>st", function()
+	vim.cmd.vnew()
+	vim.cmd.term()
+	vim.cmd.wincmd("J")
+	vim.api.nvim_win_set_height(0, 10)
+end)
+
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
@@ -101,6 +104,13 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 -- [[ Basic Autocommands ]]
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*",
+	callback = function(args)
+		require("conform").format({ bufnr = args.buf })
+	end,
+})
+
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -135,6 +145,24 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"neovim/nvim-lspconfig",
+		config = function()
+			local lspconfig = require("lspconfig")
+			lspconfig.lua_ls.setup({
+				filetype = { "lua" },
+			})
+			lspconfig.pyright.setup({
+				filetype = { "py" },
+			})
+			lspconfig.clangd.setup({
+				filetype = { "c", "cpp" },
+			})
+			lspconfig.zls.setup({
+				filetype = { "zig" },
+			})
+		end,
+	},
 	{ -- Fuzzy Finder (files, lsp, etc)
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -143,73 +171,116 @@ require("lazy").setup({
 			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 		},
 		config = function()
-		local builtin = require('telescope.builtin')
-		vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-		vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-		vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-		vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+			local builtin = require("telescope.builtin")
+			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Telescope find files" })
+			vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
+			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
+			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 		end,
 	},
 	{
-	  'saghen/blink.cmp',
-	  version = '1.*',
-	  opts = {
-	    keymap = { preset = 'default' },
+		"saghen/blink.cmp",
+		version = "1.*",
+		opts = {
+			keymap = { preset = "default" },
 
-	    appearance = {
-	      nerd_font_variant = 'mono'
-	    },
-	    completion = { documentation = { auto_show = false } },
-	    fuzzy = { implementation = "prefer_rust_with_warning" }
-	  },
-	  opts_extend = { "sources.default" }
+			appearance = {
+				nerd_font_variant = "mono",
+			},
+			completion = { documentation = { auto_show = false } },
+			fuzzy = { implementation = "prefer_rust_with_warning" },
+		},
+		opts_extend = { "sources.default" },
 	},
 	{ -- You can easily change to a different colorscheme.
-		"ellisonleao/gruvbox.nvim",
+		"rebelot/kanagawa.nvim",
 		priority = 1000, -- Make sure to load this before all the other start plugins.
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
-			require("gruvbox").setup({
+			require("kanagawa").setup({
 				styles = {
 					comments = { italic = false }, -- Disable italics in comments
 				},
 			})
-
-			vim.cmd.colorscheme("gruvbox")
+			vim.cmd.colorscheme("kanagawa")
 		end,
 	},
 	{ -- Collection of various small independent plugins/modules
 		"echasnovski/mini.nvim",
 		config = function()
-			-- Better Around/Inside textobjects
-			--
-			-- Examples:
-			--  - va)  - [V]isually select [A]round [)]paren
-			--  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-			--  - ci'  - [C]hange [I]nside [']quote
+			require("mini.comment").setup()
 			require("mini.ai").setup({ n_lines = 500 })
-
-			-- Add/delete/replace surroundings (brackets, quotes, etc.)
-			--
-			-- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-			-- - sd'   - [S]urround [D]elete [']quotes
-			-- - sr)'  - [S]urround [R]eplace [)] [']
 			require("mini.surround").setup()
+			require("mini.pairs").setup()
 
 			local statusline = require("mini.statusline")
-			-- set use_icons to true if you have a Nerd Font
 			statusline.setup({ use_icons = vim.g.have_nerd_font })
-
 			statusline.section_location = function()
 				return "%2l:%-2v"
 			end
+		end,
+	},
+	{
+		"nvim-neorg/neorg",
+		lazy = false,
+		ft = { "norg" },
+		version = "*",
+		config = function()
+			require("neorg").setup({
+				load = {
+					["core.defaults"] = {},
+					["core.concealer"] = {},
+					["core.itero"] = {},
+					["core.promo"] = {},
+					["core.dirman"] = {
+						config = {
+							workspaces = {
+								notes = "~/notes",
+							},
+							default_workspace = "notes",
+						},
+					},
+				},
+			})
+			vim.wo.foldlevel = 1
+			vim.wo.conceallevel = 2
+		end,
+	},
+	{
+		"stevearc/conform.nvim",
+		opts = {},
+		config = function()
+			require("conform").setup({
+				formatters_by_ft = {
+					lua = { "stylua" },
+					python = { "isort", "black" },
+					c = { "clang-format" },
+					cpp = { "clang-format" },
+				},
+			})
+		end,
+	},
+	{
+		"nvim-orgmode/orgmode",
+		event = "VeryLazy",
+		ft = { "org" },
+		config = function()
+			require("orgmode").setup({
+				org_agenda_files = "~/orgfiles/**/*",
+				org_default_notes_file = "~/orgfiles/refile.org",
+			})
+		end,
+	},
+	{
+		"akinsho/org-bullets.nvim",
+		config = function()
+			require("org-bullets").setup()
 		end,
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		main = "nvim-treesitter.configs", -- Sets main module to use for opts
-		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 		opts = {
 			ensure_installed = {
 				"bash",
@@ -223,6 +294,10 @@ require("lazy").setup({
 				"query",
 				"vim",
 				"vimdoc",
+				"norg",
+				"python",
+				"cpp",
+				"fortran",
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
@@ -233,22 +308,40 @@ require("lazy").setup({
 			indent = { enable = true, disable = { "ruby" } },
 		},
 	},
+	{
+		"stevearc/oil.nvim",
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {},
+		dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+		lazy = false,
+	},
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+			"nvim-telescope/telescope.nvim", -- optional
+		},
+		config = true,
+	},
 }, {
 	ui = {
 		icons = vim.g.have_nerd_font and {} or {
 			cmd = "⌘",
 			config = "🛠",
-			event = "📅",
-			ft = "📂",
-			init = "⚙",
-			keys = "🗝",
-			plugin = "🔌",
-			runtime = "💻",
-			require = "🌙",
-			source = "📄",
-			start = "🚀",
-			task = "📌",
-			lazy = "💤 ",
 		},
 	},
 })
+
+-- neovide configuration
+if vim.g.neovide then
+	vim.g.guifont = "JetBrains Mono:h14"
+	vim.g.neovide_position_animation_length = 0
+	vim.g.neovide_scroll_animation_length = 0.0
+	vim.g.neovide_cursor_animation_length = 0.0
+	vim.g.neovide_cursor_animate_in_insert_mode = false
+	vim.g.neovide_cursor_smooth_blink = false
+	vim.g.neovide_cursor_vfx_mode = ""
+	vim.g.neovide_cursor_vfx_mode = { "", "" }
+end
