@@ -112,6 +112,9 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yank
 -- save file
 vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Quick save" })
 
+-- redo
+vim.keymap.set("n", "U", "<C-r>", { desc = "redo", silent = true })
+
 -- Quit without saving (press <Esc> three times)
 vim.keymap.set("n", "<Esc><Esc><Esc>", ":q!<CR>", { desc = "Force quit without saving", silent = true })
 
