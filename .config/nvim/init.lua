@@ -17,16 +17,19 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = "a"
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
--- Sync clipboard between OS and Neovim.
-vim.schedule(function()
-	vim.opt.clipboard = "unnamedplus"
-end)
+vim.opt.textwidth = 0
+vim.opt.wrapmargin = 0
+vim.opt.wrap = true
+vim.opt.linebreak = true
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -42,7 +45,11 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = "yes"
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 50
+
+vim.opt.colorcolumn = "80"
+
+vim.opt.termguicolors = true
 
 -- Decrease mapped sequence wait time
 vim.opt.timeoutlen = 300
@@ -59,7 +66,7 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.inccommand = "split"
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+--vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 7
@@ -70,7 +77,67 @@ vim.opt.confirm = true
 
 -- [[ Basic Keymaps ]]
 -- Clear highlights on search when pressing <Esc> in normal mode
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("i", "jj", "<Esc>", { desc = "press jj to escape" })
+
+-- Emacs-equivalent navigation in insert mode
+vim.keymap.set("i", "<C-n>", "<Esc>gji", { desc = "Move to next screen line", silent = true })
+vim.keymap.set("i", "<C-a>", "<Esc>g0i", { desc = "Move to beginning of screen line", silent = true })
+vim.keymap.set("i", "<C-e>", "<Esc>g$i", { desc = "Move to end of screen line", silent = true })
+vim.keymap.set("i", "<C-p>", "<Esc>gki", { desc = "Move to previous screen line", silent = true })
+
+-- Clear search highlights
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
+
+-- Move selected lines up/down in visual mode
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected line(s) down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected line(s) up" })
+
+-- Join lines while keeping cursor position
+vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines keeping cursor" })
+
+-- Scroll while keeping cursor centered
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center cursor" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center cursor" })
+
+-- Paste over without affecting clipboard
+vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste without yanking" })
+
+-- Yank to system clipboard
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
+vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line to system clipboard" })
+
+-- Delete without affecting clipboard
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yanking" })
+
+-- save file
+vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Quick save" })
+
+-- Quit without saving (press <Esc> three times)
+vim.keymap.set("n", "<Esc><Esc><Esc>", ":q!<CR>", { desc = "Force quit without saving", silent = true })
+
+-- Splits
+vim.keymap.set("n", "<C-t>v", ":vsplit<CR>", { desc = "Open vertical split", silent = true })
+vim.keymap.set("n", "<C-t>h", ":split<CR>", { desc = "Open horizontal split", silent = true })
+vim.keymap.set("n", "<C-t>q", ":close<CR>", { desc = "Close split", silent = true })
+vim.keymap.set("n", "<C-q>", ":close<CR>", { desc = "Close split", silent = true })
+vim.keymap.set("n", "<C-x>", ":q!<CR>", { desc = "Force close split", silent = true })
+
+-- Navigate between splits using Ctrl + Arrow keys
+vim.keymap.set("n", "<C-t><Left>", "<C-w>h", { desc = "Move to left split", silent = true })
+vim.keymap.set("n", "<C-t><Right>", "<C-w>l", { desc = "Move to right split", silent = true })
+vim.keymap.set("n", "<C-t><Up>", "<C-w>k", { desc = "Move to upper split", silent = true })
+vim.keymap.set("n", "<C-t><Down>", "<C-w>j", { desc = "Move to lower split", silent = true })
+
+-- File history navigation
+vim.keymap.set("n", "<C-o>", "<C-o>", { desc = "Go to previous edited file", silent = true })
+vim.keymap.set("n", "<C-i>", "<C-i>", { desc = "Go to next edited file", silent = true })
+vim.keymap.set("n", "<C-p>", "<C-^>", { desc = "Alternate between current and previous file", silent = true })
+
+-- Tabs
+vim.keymap.set("n", "<C-t>t", ":tabnew<CR>", { desc = "Open new tab", silent = true })
+vim.keymap.set("n", "<C-t>n", ":tabnext<CR>", { desc = "Go to next tab", silent = true })
+vim.keymap.set("n", "<C-t>p", ":tabprevious<CR>", { desc = "Go to previous tab", silent = true })
+vim.keymap.set("n", "<C-t>c", ":tabclose<CR>", { desc = "Close current tab", silent = true })
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
@@ -84,24 +151,6 @@ vim.keymap.set("n", "<leader>st", function()
 	vim.cmd.wincmd("J")
 	vim.api.nvim_win_set_height(0, 10)
 end)
-
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
-
--- NOTE: Some terminals have coliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 -- [[ Basic Autocommands ]]
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -193,17 +242,28 @@ require("lazy").setup({
 		opts_extend = { "sources.default" },
 	},
 	{ -- You can easily change to a different colorscheme.
-		"rebelot/kanagawa.nvim",
-		priority = 1000, -- Make sure to load this before all the other start plugins.
-		config = function()
-			---@diagnostic disable-next-line: missing-fields
-			require("kanagawa").setup({
-				styles = {
-					comments = { italic = false }, -- Disable italics in comments
-				},
-			})
-			vim.cmd.colorscheme("kanagawa")
-		end,
+		"ellisonleao/gruvbox.nvim",
+		name = "gruvbox",
+	},
+	{
+		"sainnhe/gruvbox-material",
+		name = "gruvbox-material",
+	},
+	{
+		"ribru17/bamboo.nvim",
+		name = "bamboo",
+	},
+	{
+		"neanias/everforest-nvim",
+		name = "everforest",
+	},
+	{
+		"sainnhe/sonokai",
+		name = "sonokai",
+	},
+	{
+		"rose-pine/neovim",
+		name = "rose-pine",
 	},
 	{ -- Collection of various small independent plugins/modules
 		"echasnovski/mini.nvim",
@@ -215,9 +275,6 @@ require("lazy").setup({
 
 			local statusline = require("mini.statusline")
 			statusline.setup({ use_icons = vim.g.have_nerd_font })
-			statusline.section_location = function()
-				return "%2l:%-2v"
-			end
 		end,
 	},
 	{
@@ -232,14 +289,6 @@ require("lazy").setup({
 					["core.concealer"] = {},
 					["core.itero"] = {},
 					["core.promo"] = {},
-					["core.dirman"] = {
-						config = {
-							workspaces = {
-								notes = "~/notes",
-							},
-							default_workspace = "notes",
-						},
-					},
 				},
 			})
 			vim.wo.foldlevel = 1
@@ -265,16 +314,20 @@ require("lazy").setup({
 		event = "VeryLazy",
 		ft = { "org" },
 		config = function()
-			require("orgmode").setup({
-				org_agenda_files = "~/orgfiles/**/*",
-				org_default_notes_file = "~/orgfiles/refile.org",
-			})
+			require("orgmode").setup({})
 		end,
 	},
 	{
 		"akinsho/org-bullets.nvim",
 		config = function()
 			require("org-bullets").setup()
+		end,
+	},
+	-- Lua
+	{
+		"folke/zen-mode.nvim",
+		config = function()
+			require("zen-mode").setup()
 		end,
 	},
 	{ -- Highlight, edit, and navigate code
@@ -301,29 +354,22 @@ require("lazy").setup({
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = { "ruby" },
-			},
-			indent = { enable = true, disable = { "ruby" } },
 		},
 	},
 	{
-		"stevearc/oil.nvim",
-		---@module 'oil'
-		---@type oil.SetupOpts
-		opts = {},
-		dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-		lazy = false,
+		"tpope/vim-fugitive",
+		config = function()
+			vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
+		end,
 	},
 	{
-		"NeogitOrg/neogit",
-		dependencies = {
-			"nvim-lua/plenary.nvim", -- required
-			"sindrets/diffview.nvim", -- optional - Diff integration
-			"nvim-telescope/telescope.nvim", -- optional
-		},
-		config = true,
+		"lervag/vimtex",
+		lazy = false, -- we don't want to lazy load VimTeX
+		-- tag = "v2.15", -- uncomment to pin to a specific release
+		init = function()
+			-- VimTeX configuration goes here, e.g.
+			vim.g.vimtex_view_method = "zathura"
+		end,
 	},
 }, {
 	ui = {
@@ -336,7 +382,7 @@ require("lazy").setup({
 
 -- neovide configuration
 if vim.g.neovide then
-	vim.g.guifont = "JetBrains Mono:h14"
+	vim.g.guifont = "JetBrains Mono:h12"
 	vim.g.neovide_position_animation_length = 0
 	vim.g.neovide_scroll_animation_length = 0.0
 	vim.g.neovide_cursor_animation_length = 0.0
@@ -344,4 +390,76 @@ if vim.g.neovide then
 	vim.g.neovide_cursor_smooth_blink = false
 	vim.g.neovide_cursor_vfx_mode = ""
 	vim.g.neovide_cursor_vfx_mode = { "", "" }
+
+	vim.g.neovide_padding_top = 0
+	vim.g.neovide_padding_bottom = 0
+	vim.g.neovide_padding_right = 0
+	vim.g.neovide_padding_left = 0
+	vim.g.neovide_scale_factor = 1.0
+	vim.g.neovide_text_gamma = 0.0
+	vim.g.neovide_text_contrast = 0.5
 end
+
+-- floating terminal
+-- by TJ DeVries
+vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>")
+
+local state = {
+	floating = {
+		buf = -1,
+		win = -1,
+	},
+}
+
+local function create_floating_window(opts)
+	opts = opts or {}
+	local width = opts.width or math.floor(vim.o.columns * 0.8)
+	local height = opts.height or math.floor(vim.o.lines * 0.8)
+
+	-- Calculate the position to center the window
+	local col = math.floor((vim.o.columns - width) / 2)
+	local row = math.floor((vim.o.lines - height) / 2)
+
+	-- Create a buffer
+	local buf = nil
+	if vim.api.nvim_buf_is_valid(opts.buf) then
+		buf = opts.buf
+	else
+		buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
+	end
+
+	-- Define window configuration
+	local win_config = {
+		relative = "editor",
+		width = width,
+		height = height,
+		col = col,
+		row = row,
+		style = "minimal", -- No borders or extra UI elements
+		border = "rounded",
+	}
+
+	-- Create the floating window
+	local win = vim.api.nvim_open_win(buf, true, win_config)
+
+	return { buf = buf, win = win }
+end
+
+local toggle_terminal = function()
+	if not vim.api.nvim_win_is_valid(state.floating.win) then
+		state.floating = create_floating_window({ buf = state.floating.buf })
+		if vim.bo[state.floating.buf].buftype ~= "terminal" then
+			vim.cmd.terminal()
+		end
+	else
+		vim.api.nvim_win_hide(state.floating.win)
+	end
+end
+
+-- Example usage:
+-- Create a floating window with default dimensions
+vim.api.nvim_create_user_command("Floaterminal", toggle_terminal, {})
+vim.keymap.set({ "n", "t" }, "<leader>tt", toggle_terminal)
+
+-- load colorscheme
+vim.cmd.colorscheme("everforest")
