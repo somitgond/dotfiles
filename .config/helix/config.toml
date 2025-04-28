@@ -36,9 +36,6 @@ hidden = true
 '`' = '`'
 '<' = '>'
 
-[editor.whitespace]
-render = "all"
-# or control each character
 [editor.whitespace.render]
 space = "all"
 tab = "all"
@@ -51,7 +48,6 @@ space = "·"
 nbsp = "⍽"
 nnbsp = "␣"
 tab = "→"
-newline = "⏎"
 tabpad = "·" # Tabs will look like "→···" (depending on tab width)
 
 [editor.indent-guides]
