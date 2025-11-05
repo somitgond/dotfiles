@@ -16,7 +16,7 @@
 #
 export LANG=en_US.UTF-8
 export BROWSER='firefox'
-export ENV=~/.mkshrc
+#export ENV=~/.mkshrc
 export TERMINAL='st'
 #if [ "$(tty)" == "/dev/tty1" ]; then 
 #    pgrep -x dwm || exec startx
