@@ -72,7 +72,7 @@ The DWIM behaviour of this command is as follows:
       display-time-default-load-average nil     ;; Don't show me load time
       scroll-margin                     0       ;; Space between top/bottom
       use-dialog-box                    nil)    ;; Disable dialog
-(global-display-line-numbers-mode t)
+
 
 (let ((mono-spaced-font "Hack Nerd Font Mono")
       (proportionately-spaced-font "Sans"))
@@ -146,6 +146,8 @@ The DWIM behaviour of this command is as follows:
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 
 ;;; The file manager (Dired)
+(setq display-line-numbers-type 'relative)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
 (use-package dired
   :ensure nil
