@@ -195,3 +195,11 @@ The DWIM behaviour of this command is as follows:
 
 (use-package magit 
   :ensure t)
+(use-package treesit-auto
+  :ensure t
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode))
