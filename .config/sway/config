@@ -6,18 +6,18 @@
 
 # dbus 
 #exec --no-startup-id dbus-update-activation-environment --all
-exec dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP='sway'
+exec dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP='sway:wlroots' XDG_SESSION_TYPE=wayland
 
 ### Variables
 #set $term footclient -e tmux
-set $term foot -e tmux
+set $term foot
 set $screenshot grim -g "$(slurp)" - | swappy -f -
 set $emacs emacsclient -c -a 'emacs'
 set $filemanager pcmanfm
 set $menu bemenu-run --line-height 26 --list 5 --ignorecase --fn 'JetBrains Mono Bold 12'  --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
-set $menu_dmenu dmenu_run -fn "JetBrains Mono:style=Bold:size=11:antialias=true:autohint=true" -nb "#1c1c1c" -nf "#d5c4a1" -sb "#444444" -sf "#87af87" 
+set $menu_dmenu dmenu_run -fn "Hack Nerd Font Mono:style=Bold:size=11:antialias=true:autohint=true" -nb "#1c1c1c" -nf "#d5c4a1" -sb "#444444" -sf "#87af87" 
 
-font pango:JetBrains Mono Bold 11
+font pango:Hack Nerd Font Mono 11
 
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
@@ -208,39 +208,31 @@ bindsym $mod+r mode "resize"
 bar {
     position top
 	height 22
-	font pango:JetBrains Mono Bold 11
+	font pango:Hack Nerd Font Mono Bold 11
 	output *
-	mode hide
+	#mode hide
 	#gaps 3
-    # When the status_command prints a new line to stdout, swaybar updates.
-    # The default just shows the current date and time.
-    status_command while date +[$(cat /sys/class/power_supply/BAT0/capacity)$(cat /sys/class/power_supply/BAT0/status | cut -c1)\ $(cat /sys/class/power_supply/BAT1/capacity)$(cat /sys/class/power_supply/BAT1/status | cut -c1)]\ '%a %m-%d %H:%M'; do sleep 30; done
+	   # When the status_command prints a new line to stdout, swaybar updates.
+	   # The default just shows the current date and time.
+	   #status_command while date +[$(cat /sys/class/power_supply/BAT0/capacity)$(cat /sys/class/power_supply/BAT0/status | cut -c1)]\ '%a %m-%d %H:%M'; do sleep 30; done
 
-    colors {
+    status_command i3status-rs
+
+	   colors {
 			# gruvbox color scheme
 			background #3c3836
 			statusline #ebdbb2
 			separator  #666666
-       		focused_workspace  #458588 #458588 #ebdbb2
+	      		focused_workspace  #458588 #458588 #ebdbb2
 			active_workspace   #83a598 #83a598 #ebdbb2
 			inactive_workspace #504945 #504945 #ebdbb2		
-    }
+	   }
 }
 
 # keyboard
 # or input <identifier>
 input "type:keyboard" {
-    xkb_layout us,us
-    xkb_variant colemak_dh,
-    xkb_options caps:swapescape,grp:shift_caps_toggle
-    repeat_delay 300
-    repeat_rate 50
-	xkb_capslock disabled
-	xkb_numlock disabled
-}
-input "1:1:kanata" {
-    xkb_layout us,us
-    xkb_variant colemak_dh,
+    xkb_layout us
     xkb_options caps:swapescape,grp:shift_caps_toggle
     repeat_delay 300
     repeat_rate 50
@@ -313,6 +305,7 @@ titlebar_padding 1
 title_align center
 titlebar_border_thickness 1
 
+output eDP-1 scale 1.25
 # Gaps
 smart_gaps on
 gaps inner 6
@@ -350,7 +343,7 @@ bindsym $mod+alt+e exec $emacs
 exec emacs --daemon
 
 ## pipewire
-#exec gentoo-pipewire-launcher restart &
+exec pipewire 2>/dev/null &
 
 # start dunst
 #exec dunst 
@@ -379,14 +372,14 @@ for_window [shell="xwayland"] title_format "[XWayland] %title"
 #exec wl-paste -t text --watch clipman store --no-persist
 
 # xdg stuff
-exec killall xdg-desktop-portal xdg-desktop-portal-wlr
-exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal &
+exec killall xdg-desktop-portal xdg-desktop-portal-wlr &
+exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal -r &
 exec XDG_CURRENT_DESKTOP=sway /usr/libexec/xdg-desktop-portal-wlr &
 
 # setting gtk theme
 set $gnome-schema org.gnome.desktop.interface
 exec_always {
-    gsettings set $gnome-schema gtk-theme 'Gruvbox-Dark'
+    #gsettings set $gnome-schema gtk-theme 'Gruvbox-Dark'
     gsettings set $gnome-schema icon-theme 'ePapirus-Dark'
     gsettings set $gnome-schema cursor-theme 'Adwaita-Dark'
     gsettings set $gnome-schema font-name 'Sans 10'
@@ -404,3 +397,7 @@ seat seat0 hide_cursor when-typing enable
 
 # read config files 
 #include /etc/sway/config.d/*
+
+# include .Xresources settings
+exec xrdb -load ~/.Xresources
+
