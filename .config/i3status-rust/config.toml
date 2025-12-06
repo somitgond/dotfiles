@@ -33,14 +33,16 @@ format = " $icon root: $available.eng(w:2) "
 # format = " $icon $mem_total_used_percents.eng(w:2) "
 # format_alt = " $icon_swap $swap_used_percents.eng(w:2) "
 
-# [[block]]
-# block = "sound"
-# driver = "auto" 
-# format = " $icon $volume "
+[[block]]
+block = "sound"
+driver = "auto"
+[[block.click]]
+button = "left"
+cmd = "pavucontrol"
 
 [[block]]
 block = "backlight"
-device = "amdgpu_bl0" 
+device = "amdgpu_bl0"   # check your device in /sys/class/backlight
 format = " $icon $brightness "
 # Mouse wheel up/down can increase/decrease brightness
 [[block.click]]
@@ -56,7 +58,6 @@ device = "BAT0"
 interval = 30
 full_format = " $icon $percentage"
 not_charging_format = " $icon $percentage"
-
 
 [[block]]
 block = "time"
