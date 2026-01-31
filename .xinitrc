@@ -26,6 +26,7 @@ unclutter &
 # NetworkManager applet 
 #nm-applet & 
 
+[[ -f .config/xmodmap/xmodmap.conf ]] && xmodmap .config/xmodmap/xmodmap.conf
 #map capslock to escape key
 setxkbmap -option caps:escape &
 
