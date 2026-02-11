@@ -6,7 +6,7 @@ Config { font = "JetBrains Mono Bold 13"
        , bgColor         = "#1a1b26"
        , fgColor         = "#a9b1d6"
        , alpha = 255
-       , position = TopSize C 100 25 |
+       , position = TopSize L 100 25 |
        , textOffset = -1
        , iconOffset = -1
        , lowerOnStart = True
@@ -18,10 +18,13 @@ Config { font = "JetBrains Mono Bold 13"
        , overrideRedirect = True
        , textOutputFormat = Ansi
        , commands = [ Run XMonadLog
-                     ,Run Network "enp2s0" ["-L","0","-H","32",
-                                          "--normal","green","--high","red"] 10
-                    , Run Network "wlp2s0" ["-L","0","-H","32",
-                                          "--normal","green","--high","red"] 10
+                    , Run DynNetwork     [ "--template" , "<dev>: <tx>kB/s|<rx>kB/s"
+                             , "--Low"      , "1000"       -- units: B/s
+                             , "--High"     , "5000"       -- units: B/s
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 10
                     , Run Com "uname" ["-s","-r"] "" 36000
                     , Run Battery
                     [ "-t", "<fc=#7aa2f7>󱐋 BAT:</fc> <acstatus>"
@@ -35,9 +38,15 @@ Config { font = "JetBrains Mono Bold 13"
                       , "-O", "<fc=#e0af68>Charging</fc> <left>%"
                       , "-i", "<fc=#9ece6a>Charged</fc>"
                     ] 50
+                    , Run Alsa "default" "Master"
+                    [ "--template", "<volumestatus>"
+                    , "--suffix"  , "True"
+                      , "--"
+                      , "--on", ""
+                    ]
                     , Run Date "%a %_d %R" "date" 10
                     ]
-       , sepChar = "%"
+                    , sepChar = "%"
        , alignSep = "}{"
-       , template = "%XMonadLog% }{ %enp2s0% - %wlp2s0% | %battery% | %date%"
+       , template = "%XMonadLog% }{ %dynnetwork% | %alsa:default:Master% | %battery% | %date% "
        }

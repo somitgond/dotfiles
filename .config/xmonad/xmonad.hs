@@ -7,6 +7,7 @@
 -- Normally, you'd only override those defaults you care about.
 --
 
+import Data.Map qualified as M
 import XMonad
 import Data.Monoid
 import System.Exit
@@ -17,10 +18,24 @@ import XMonad.Hooks.InsertPosition
 import XMonad.Layout.NoBorders
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing
-import XMonad.Layout.Spiral
-import XMonad.Util.SpawnOnce (spawnOnce)
+import XMonad.Util.SpawnOnce
 import XMonad.Util.Loggers
 import XMonad.Util.Run
+import XMonad.Layout.Renamed
+import XMonad.Util.EZConfig (additionalKeysP)
+import Graphics.X11.ExtraTypes.XF86
+import XMonad.Util.NamedScratchpad
+
+-- Layouts
+import XMonad.Layout.Grid
+import XMonad.Layout.Spiral
+import XMonad.Layout.NoBorders
+import XMonad.Layout.Tabbed
+import XMonad.Layout.Fullscreen
+import XMonad.Layout.ToggleLayouts          -- Full window at any time
+import XMonad.Layout.BinarySpacePartition
+import XMonad.Layout.Mosaic
+import XMonad.Layout.ThreeColumns
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -41,6 +56,9 @@ myClickJustFocuses = False
 -- Width of the window border in pixels.
 --
 myBorderWidth   = 2
+
+-- Gaps
+mySpacing = spacingWithEdge 3
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -131,7 +149,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
@@ -141,6 +159,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+     -- Volume controls
+    , ((0, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%")
+    , ((0, xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%")
+    , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    , ((0, xF86XK_MonBrightnessUp), spawn "brightnessctl set 5%+")
+    , ((0, xF86XK_MonBrightnessDown), spawn "brightnessctl set 5%-")
     ]
     ++
 
@@ -192,19 +216,29 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts (tiled ||| Mirror tiled ||| Full) 
+-- myLayout = avoidStruts (tiled ||| Mirror tiled ||| Full) 
+--   where
+--      -- default tiling algorithm partitions the screen into two panes
+--      tiled   = Tall nmaster delta ratio
+--
+--      -- The default number of windows in the master pane
+--      nmaster = 1
+--
+--      -- Default proportion of screen occupied by master pane
+--      ratio   = 1/2
+--
+--      -- Percent of screen to increment by when resizing panes
+--      delta   = 3/100
+myLayout=
+  avoidStruts $
+        renamed [Replace "Tall"] (mySpacing tall)
+        ||| renamed [Replace "Wide"] (mySpacing (Mirror tall))
+        ||| renamed [Replace "Full"] (mySpacing Full)
+        ||| renamed [Replace "Spiral"] (mySpacing (spiral (6 / 7)))
+        ||| renamed [Replace "simpleTabbed"] (mySpacing simpleTabbed)
   where
-     -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
+    tall = ResizableTall 1 (3 / 100) (11 / 20) []
 
-     -- The default number of windows in the master pane
-     nmaster = 1
-
-     -- Default proportion of screen occupied by master pane
-     ratio   = 1/2
-
-     -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -255,9 +289,13 @@ myLogHook = return ()
 --
 -- By default, do nothing.
 myStartupHook = do
-  spawnOnce " xwallpaper --zoom \"$(ls ~/.wallpapers/* | shuf | head -1)\" &"
-  spawnOnce "picom &"
-  spawnOnce " trayer --edge top --align right --SetDockType true --SetPartialStrut true expand true --width 10 --transparent true --tint 0x5f5f5f --height 18 &"
+  spawnOnce "xwallpaper --zoom \"$(ls ~/.wallpapers/* | shuf | head -1)\" &"
+  spawnOnce "picom --backend xrender -b &"
+  spawnOnce "trayer --edge top --align right --SetDockType true --SetPartialStrut true expand true --width 10 --transparent true --tint 0x5f5f5f --height 18 &"
+  spawnOnce "xclip &"
+  spawnOnce "dunst &"
+  spawnOnce "unclutter &"
+  spawnOnce "setxkbmap -option caps:escape &"
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
 
