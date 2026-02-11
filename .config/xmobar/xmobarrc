@@ -1,0 +1,43 @@
+Config { font = "JetBrains Mono Bold 13"
+       , additionalFonts = ["JetBrains Mono Bold 11"]
+       , borderColor = "black"
+       , border = BottomB
+       , borderWidth = 2
+       , bgColor         = "#1a1b26"
+       , fgColor         = "#a9b1d6"
+       , alpha = 255
+       , position = TopSize C 100 25 |
+       , textOffset = -1
+       , iconOffset = -1
+       , lowerOnStart = True
+       , pickBroadest = False
+       , persistent = False
+       , hideOnStart = False
+       , iconRoot = "."
+       , allDesktops = True
+       , overrideRedirect = True
+       , textOutputFormat = Ansi
+       , commands = [ Run XMonadLog
+                     ,Run Network "enp2s0" ["-L","0","-H","32",
+                                          "--normal","green","--high","red"] 10
+                    , Run Network "wlp2s0" ["-L","0","-H","32",
+                                          "--normal","green","--high","red"] 10
+                    , Run Com "uname" ["-s","-r"] "" 36000
+                    , Run Battery
+                    [ "-t", "<fc=#7aa2f7>󱐋 BAT:</fc> <acstatus>"
+                    , "-L", "20"
+                      , "-H", "80"
+                      , "-l", "#f7768e"
+                      , "-n", "#e0af68"
+                      , "-h", "#9ece6a"
+                      , "--"
+                      , "-o", "<left>% (<timeleft>)"
+                      , "-O", "<fc=#e0af68>Charging</fc> <left>%"
+                      , "-i", "<fc=#9ece6a>Charged</fc>"
+                    ] 50
+                    , Run Date "%a %_d %R" "date" 10
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%XMonadLog% }{ %enp2s0% - %wlp2s0% | %battery% | %date%"
+       }
