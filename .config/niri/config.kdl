@@ -109,7 +109,7 @@ output "eDP-1" {
     mode "1920x1200@60.026"
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
-    scale 1.00
+    scale 1.25
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
@@ -288,10 +288,14 @@ layout {
 // See the binds section below for more spawn examples.
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-at-startup "waybar"
+// spawn-at-startup "waybar"
 spawn-at-startup "dunst"
-spawn-sh-at-startup "swaybg -m fill -i $(find $wallpapers_path -type f | shuf -n 1) &"
+spawn-at-startup "swww-daemon"
+// spawn-sh-at-startup "swaybg -m fill -i $(find ~/.wallpapers -type f | shuf -n 1)"
 spawn-at-startup "swayidle -w timeout 601 'niri msg action power-off-monitors' timeout 600 'swaylock -f' before-sleep 'swaylock -f'"
+
+// if scaling > 1 set default font size
+// spawn-sh-at-startup "gsettings set org.gnome.desktop.interface font-name 'Cantarell 10'"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -369,7 +373,7 @@ window-rule {
     clip-to-geometry true
 
     // Set open-maximized to true for all windows.
-    open-maximized true
+    // open-maximized true
 }
 
 // Block out mako notifications from screencasts.
@@ -396,9 +400,11 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
-    Mod+Shift+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
+    Mod+Shift+Return hotkey-overlay-title="Open a Terminal: foot" { spawn-sh "foot"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Mod+P hotkey-overlay-title="Run an Application: fuzzel" { spawn "dmenu_run"; }
+
+    Mod+P hotkey-overlay-title="rofi" { spawn-sh "rofi -show combi"; }
+
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
@@ -632,8 +638,8 @@ binds {
     // a matching layout switch hotkey configured in xkb options above.
     // Having both at once on the same hotkey will break the switching,
     // since it will switch twice upon pressing the hotkey (once by xkb, once by niri).
-    // Mod+Space       { switch-layout "next"; }
-    // Mod+Shift+Space { switch-layout "prev"; }
+    Mod+Space       { switch-layout "next"; }
+    Mod+Shift+Space { switch-layout "prev"; }
 
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
