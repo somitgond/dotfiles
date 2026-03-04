@@ -311,8 +311,6 @@ nmap_leader('vl', '<Cmd>lua MiniVisits.add_label()<CR>',          'Add label')
 nmap_leader('vL', '<Cmd>lua MiniVisits.remove_label()<CR>',       'Remove label')
 -- stylua: ignore end
 
-
-
 vim.pack.add({ 'https://github.com/nvim-mini/mini.nvim' })
 
 local misc = require('mini.misc')
@@ -451,6 +449,8 @@ now(function() require('mini.notify').setup() end)
 -- - `<Leader>sr` - read previously started session
 -- - `<Leader>sd` - delete previously started session
 now(function() require('mini.sessions').setup() end)
+
+now(function() require('mini.statusline').setup() end)
 
 -- Navigate and manipulate file system
 --
@@ -973,10 +973,12 @@ later(function() add({ 'https://github.com/rafamadriz/friendly-snippets' }) end)
 Config.now(function()
  -- Install only those that you need
  add({
-   'https://github.com/ellisonleao/gruvbox.nvim',
    'https://github.com/oskarnurm/koda.nvim',
+   'https://github.com/dgrco/deepspace.nvim',
+   'https://github.com/dgrco/monolith.nvim',
+   'https://github.com/mhartington/oceanic-next',
  })
-
-  -- Enable only one
-  vim.cmd('color koda-moss')
+   -- vim.cmd.colorscheme "koda-moss"
+   vim.cmd.colorscheme "OceanicNext"
 end)
+
