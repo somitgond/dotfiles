@@ -708,30 +708,6 @@ later(function() require('mini.diff').setup() end)
 -- - `:h MiniGit.show_at_cursor()` - what information at cursor is shown
 later(function() require('mini.git').setup() end)
 
--- Highlight patterns in text. Like `TODO`/`NOTE` or color hex codes.
--- Example usage:
--- - `:Pick hipatterns` - pick among all highlighted patterns
---
--- See also:
--- - `:h MiniHipatterns-examples` - examples of common setups
-later(function()
-  local hipatterns = require('mini.hipatterns')
-  local hi_words = MiniExtra.gen_highlighter.words
-  hipatterns.setup({
-    highlighters = {
-      -- Highlight a fixed set of common words. Will be highlighted in any place,
-      -- not like "only in comments".
-      fixme = hi_words({ 'FIXME', 'Fixme', 'fixme' }, 'MiniHipatternsFixme'),
-      hack = hi_words({ 'HACK', 'Hack', 'hack' }, 'MiniHipatternsHack'),
-      todo = hi_words({ 'TODO', 'Todo', 'todo' }, 'MiniHipatternsTodo'),
-      note = hi_words({ 'NOTE', 'Note', 'note' }, 'MiniHipatternsNote'),
-
-      -- Highlight hex color string (#aabbcc) with that color as a background
-      hex_color = hipatterns.gen_highlighter.hex_color(),
-    },
-  })
-end)
-
 -- Special key mappings. Provides helpers to map:
 -- - Multi-step actions. Apply action 1 if condition is met; else apply
 --   action 2 if condition is met; etc.
@@ -935,7 +911,7 @@ local now_if_args, later = Config.now_if_args, Config.later
 --   and return back to the final tabstop.
 -- - To end a snippet session when at final tabstop, keep typing or go into
 --   Normal mode. To force end snippet session, press `<C-c>`.
--- 
+--
 -- See also:
 -- - `:h MiniSnippets-overview` - overview of how module works
 -- - `:h MiniSnippets-examples` - examples of common setups
