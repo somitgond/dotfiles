@@ -361,10 +361,10 @@
 ;; Vertico provides a vertical completion interface, making it easier to
 ;; navigate and select from completion candidates (e.g., when `M-x` is pressed).
 (use-package vertico
-  ;; :custom
+  :custom
   (vertico-scroll-margin 0) ;; Different scroll margin
   (vertico-count 20) ;; Show more candidates
-  (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+  ;;(vertico-resize t) ;; Grow and shrink the Vertico minibuffer
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :init
   (vertico-mode 1))
@@ -574,13 +574,20 @@
   :config
   (define-key paredit-mode-map (kbd "RET") nil))
 
-
 ;; For paredit+Evil mode users: enhances paredit with Evil mode compatibility
 ;; --------------------------------------------------------------------------
 (use-package enhanced-evil-paredit
   :commands enhanced-evil-paredit-mode
   :hook
   (paredit-mode . enhanced-evil-paredit-mode))
+
+(use-package gruber-darker-theme
+  :config
+  (load-theme 'gruber-darker t))
+
+(use-package doom-modeline
+  :config
+  (doom-modeline-mode t))
 
 
 ;; `vterm' is an Emacs terminal emulator that provides a fully interactive shell
@@ -620,4 +627,3 @@
   (setq vterm-timer-delay 0.05)  ; Faster vterm
   (setq vterm-kill-buffer-on-exit t)
   (setq vterm-max-scrollback 5000))
-
