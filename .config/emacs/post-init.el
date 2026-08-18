@@ -54,9 +54,6 @@
   (setq pixel-scroll-precision-use-momentum nil) ; Precise/smoother scrolling
   (pixel-scroll-precision-mode 1))
 
-;; Display the time in the modeline
-(display-time-mode 1)
-
 ;; Paren match highlighting
 (show-paren-mode 1)
 
@@ -90,7 +87,7 @@
 ;; be dragged with the mouse, thus allowing you to easily resize adjacent
 ;; windows.
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Dividers.html
-(window-divider-mode 1)
+;;(window-divider-mode 1)
 
 ;; Constrain vertical cursor movement to lines within the buffer
 (setq dired-movement-style 'bounded-files)
@@ -127,7 +124,7 @@
 (minibuffer-depth-indicate-mode 1)
 
 ;; Configure Emacs to ask for confirmation before exiting
-(setq confirm-kill-emacs 'y-or-n-p)
+;;(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; Enabled backups save your changes to a file intermittently
 (setq make-backup-files t)
@@ -162,7 +159,6 @@
   (async-package-do-action t))
 
 ;; evil mode
-
 ;; Vim emulation
 (use-package evil
   :ensure t
@@ -190,13 +186,14 @@
   ;; Enable fine-grained undo behavior
   (evil-want-fine-undo t)
   ;; Disable wrapping of search around buffer
-  (evil-search-wrap nil)
+  ;;(evil-search-wrap nil)
   ;; Whether Y yanks to the end of the line
   (evil-want-Y-yank-to-eol t)
 
   :init
   ;; It has to be defined before evil
   (setq evil-want-integration t)
+  (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
   (evil-mode 1)
 
@@ -554,18 +551,11 @@
   (helpful-max-buffers 7))
 
 
-;; Enables automatic indentation of code while typing
-(use-package aggressive-indent
-  :commands aggressive-indent-mode
-  :hook
-  (emacs-lisp-mode . aggressive-indent-mode))
-
 ;; Highlights function and variable definitions in Emacs Lisp mode
 (use-package highlight-defined
   :commands highlight-defined-mode
   :hook
   (emacs-lisp-mode . highlight-defined-mode))
-
 
 (use-package paredit
   :commands paredit-mode
@@ -627,3 +617,4 @@
   (setq vterm-timer-delay 0.05)  ; Faster vterm
   (setq vterm-kill-buffer-on-exit t)
   (setq vterm-max-scrollback 5000))
+(electric-indent-mode -1)
