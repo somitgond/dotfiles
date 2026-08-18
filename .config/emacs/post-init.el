@@ -195,6 +195,7 @@
   (setq evil-want-integration t)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
+  (defvar evil-mode-buffers nil)
   (evil-mode 1)
 
   :config
@@ -360,7 +361,7 @@
 (use-package vertico
   :custom
   (vertico-scroll-margin 0) ;; Different scroll margin
-  (vertico-count 20) ;; Show more candidates
+  (vertico-count 10) ;; Show more candidates
   ;;(vertico-resize t) ;; Grow and shrink the Vertico minibuffer
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :init
