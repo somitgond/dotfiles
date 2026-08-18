@@ -619,3 +619,4 @@
   (setq vterm-kill-buffer-on-exit t)
   (setq vterm-max-scrollback 5000))
 (electric-indent-mode -1)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
